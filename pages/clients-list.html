@@ -1,0 +1,272 @@
+<table class="display compact" id="table-data">
+	<thead>
+		<tr>
+			<th class="text-left">Client ID</th>
+			<th class="text-left">Contact Person</th>
+			<th class="text-left">Company Address</th>
+			<th class="text-left">Email Address</th>
+			<th class="text-left">Phone</th>
+			<th class="text-left">Mobile</th>
+			<th class="text-left">License Key</th>
+			<th class="text-left">Company Name</th>
+			<th class="text-left">Duration</th>
+			<th class="text-left">Activation Date</th>
+			<th class="text-left">Expiry Date</th>
+			<th class="text-left">Expiry Count</th>
+		</tr>
+	</thead>
+	<tbody>		
+	</tbody>
+</table>		
+<script>
+	$(function() {	
+		// DT Buttons Text
+		var dtBtnNewTxt = '<i class="fa fa-plus"></i> New Client',
+			dtBtnEditTxt = '<i class="fa fa-pencil"></i> Edit Client',
+			dtBtnDelTxt = '<i class="fa fa-trash-o"></i> Delete Client',
+			dtBtnDtlTxt = '<i class="fa fa-info-circle"></i> Client Details',
+			dtBtnRelTxt = '<i class="fa fa-refresh"></i> Refresh',
+			
+		// Modal Form Options
+		modalFrmContent = $('<div></div>').load(FRM_CLIENTS),
+		modalNewTitle = '<i class="fa fa-plus"></i> New Client Data',
+		modalEditTitle = '<i class="fa fa-pencil"></i> Edit Client Data',
+				
+		// DT Buttons Object
+		dtBtnNew = {		
+			name: 'new',			
+			text: dtBtnNewTxt,							
+			className: 'btn-primary',
+			action: function(e, dt, node, config) {
+				BootstrapDialog.show({
+					closable: false,
+					title: modalNewTitle,
+					message: modalFrmContent,
+					onshown: btnNewOnShown,
+					onhidden: btnOnHidden
+				});
+			}			
+		},
+		dtBtnEdit = {	
+			name: 'edit',
+			enabled: false,
+			text: dtBtnEditTxt,	
+			className: 'btn-primary',			
+			action: function(e, dt, node, config) {
+				BootstrapDialog.show({
+					closable: false,
+					title: modalEditTitle,
+					message: modalFrmContent,
+					onshown: btnEditOnShown,
+					onhidden: btnOnHidden
+				});
+			}			
+		},
+		dtBtnDelete = {	
+			name: 'delete',
+			enabled: false,
+			text: dtBtnDelTxt,						
+			className: 'btn-primary',
+			action: btnDeleteAction	
+		},
+		dtBtnDetails = {						
+			name: 'details',
+			text: dtBtnDtlTxt,						
+			className: 'btn-primary',
+			action: reloadDT
+		},		
+		dtBtnReload = {						
+			name: 'reload',
+			text: dtBtnRelTxt,						
+			className: 'btn-primary',
+			action: reloadDT
+		};
+		
+		// Trigger on New Modal OnShown
+		function btnNewOnShown(dialogRef) {
+			var modalBody = dialogRef.getModalBody(),
+				cells = modalBody.find('td[data-cell]'),
+				elements = modalBody.find('input[data-field]');
+			$.each(cells, function(idx, cell) { $(cell).text(''); });
+			$.each(elements, function(idx, elem) { $(elem).val(''); });
+		}
+		
+		// Trigger on Edit Modal OnShown
+		function btnEditOnShown(dialogRef) {
+			var rowData = dt.row('.selected').data(),
+				modalBody = dialogRef.getModalBody();			
+			$.each(rowData, function(name, value) {
+				modalBody.find('input[data-field="' + name + '"]').val(value);
+				modalBody.find('td[data-cell="' + name + '"]').text(value);
+			});
+		}
+		
+		// Trigger on Modal OnHidden
+		function btnOnHidden(dialogRef) {
+			dt.ajax.reload();
+			dt.button('edit:name').disable();
+			dt.button('delete:name').disable();	
+			dt.button('details:name').disable();	
+			// Remove active pills & tabs 
+			$('#nav-client').children('li').removeClass('active');
+			$('#tab-client').children('div').removeClass('active');
+			$('#tab-client').children('div').removeClass('in');
+			// Reset pills & tabs 
+			$('#nav-client').children('li:first-child').addClass('active');
+			$('#tab-client').children('div:first-child').addClass('active');
+			$('#tab-client').children('div:first-child').addClass('in');			
+			// Clear Fields & Help Blocks
+			$('#client-info').find('td[data-cell]').text('');
+			$('#license-info').find('td[data-cell]').text('');
+			$('#dataClientsForm').find('input[data-field]').val('');
+			$('#dataLicenseForm').find('input[data-field]').val('');
+			STIC.FormValidation({ formId: '#dataClientsForm', clearHelpBlocks: true });
+			STIC.FormValidation({ formId: '#dataLicenseForm', clearHelpBlocks: true });
+		}
+		
+		// Reload Button Action
+		function reloadDT(e, dt, node, config) {
+			dt.ajax.reload();
+			dt.button('edit:name').disable();
+			dt.button('delete:name').disable();		
+			dt.button('details:name').disable();	
+		}
+		
+		// New & Edit Button Action 
+		function btnSaveAction(dialogRef) {
+			var isValid = STIC.FormValidation({
+				formId: '#dataClientsForm'
+			});		
+			if (isValid) {
+				var wsPost = '',			
+					postString = '',
+					JSONString = '',
+					JSONObject = {},
+					infoMessage = '',
+					modalBody = dialogRef.getModalBody(),
+					pkId = $('input[data-field="client_id"]'),
+					elements = modalBody.find('input[data-field], select[data-field]');
+				if (pkId.val() != '') {
+					wsPost = WS_CLIENT_UPDATE;
+					infoTitle = MSG_EDIT_REC_TITLE;
+					infoMessage = MSG_EDIT_REC_INFO;
+				} else {
+					wsPost = WS_CLIENT_INSERT;
+					infoTitle = MSG_ADD_REC_TITLE;			
+					infoMessage = MSG_ADD_REC_INFO;
+				}				
+				$.each(elements, function(idx, elem) {
+					var input = $(elem), 	
+						inputValue = input.val(),
+						inputField = input.attr('data-field');						
+					postString = '{"' + inputField + '":"' + inputValue + '"}';
+					$.extend(JSONObject, $.parseJSON(postString)); 
+				});					
+				JSONString = 'clientInfo=' + JSON.stringify(JSONObject);	
+				$.post(wsPost, JSONString, function(data, status) {
+					BootstrapDialog.closeAll();	
+					dt.ajax.reload();	
+					dt.button('edit:name').disable();
+					dt.button('delete:name').disable();		
+					dt.button('details:name').disable();	
+					BootstrapDialog.alert({
+						title: infoTitle,
+						message: infoMessage,	
+						type: BootstrapDialog.TYPE_PRIMARY,
+						callback: function(result) {
+							BootstrapDialog.closeAll();								
+						}
+					});				
+				});
+			}
+		}
+		
+		// Delete Button Action
+		function btnDeleteAction(e, dt, node, config) {
+			BootstrapDialog.confirm({
+				title: MSG_TITLE_CONFIRM_DELETE,
+				message: MSG_CONFIRM_DELETE_RECORD,		
+				type: BootstrapDialog.TYPE_DANGER,
+				callback: function(result) {
+					if (result) {	
+						var pkIdVal = dt.cell('.selected', 0).data(),
+							postData = $.parseJSON('{"client_id":"' + pkIdVal + '"}');
+						$.ajax({
+							method: 'POST',
+							url: WS_CLIENT_DELETE,
+							data: postData
+						}).done(function(a) {							
+							dt.ajax.reload();
+							dt.button('edit:name').disable();
+							dt.button('delete:name').disable();		
+							dt.button('details:name').disable();							
+							BootstrapDialog.alert({
+								title: MSG_INFO_TITLE,
+								message: MSG_DEL_REC_INFO,
+								type: BootstrapDialog.TYPE_PRIMARY,
+								callback: function() {
+									BootstrapDialog.closeAll();									
+								}
+							});
+						}).fail(function() {
+							dt.ajax.reload();		
+							dt.button('edit:name').disable();
+							dt.button('delete:name').disable();	
+							dt.button('details:name').disable();
+							BootstrapDialog.alert({
+								title: MSG_WS_ERROR_TITLE,
+								message: MSG_WS_ERROR_INFO,
+								type: BootstrapDialog.TYPE_DANGER,
+								callback: function() {
+									BootstrapDialog.closeAll();									
+								}
+							});
+						});	
+					} else {
+						dt.ajax.reload();
+						dt.button('edit:name').disable();
+						dt.button('delete:name').disable();	
+						dt.button('details:name').disable();
+					} 
+				}
+			});
+		}
+		
+		// DT Initialization
+		var dt = $('#table-data')
+			.DataTable({			
+				ordering: true,
+				searching: true,
+				processing: true,
+				lengthChange: false,
+				dom: '<"dt-toolbar">Bfrtip',
+				pageLength: DEFAULT_PAGE_LENGTH,
+				columns: CD_CLIENT_LIST,
+				ajax: { 
+					url: WS_CLIENT_LIST, 
+					dataSrc: function(json) {
+						var ds = DEFAULT_DS_REPORTS.split('.'),
+							rec = json[ds[0]][ds[1]][ds[2]];
+						return ($.isArray(rec) === true ? rec : (rec !== '' ? [rec] : []));
+					}   
+				},
+				buttons: [dtBtnNew, dtBtnEdit, dtBtnDelete, dtBtnDetails, dtBtnReload]
+			});	
+		
+		// DT Row Click Event
+		$('#table-data tbody').on('click', 'tr', function() {
+			if ($(this).hasClass('selected')) {
+				$(this).removeClass('selected');		
+				dt.button('edit:name').disable();
+				dt.button('delete:name').disable();		
+				dt.button('details:name').disable();				
+			} else {
+				dt.$('tr.selected').removeClass('selected');
+				$(this).addClass('selected');				
+				dt.button('edit:name').enable();
+				dt.button('delete:name').enable();	
+				dt.button('details:name').enable();
+			}		
+		});
+	});
+</script>
