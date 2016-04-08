@@ -2,6 +2,8 @@
 	<thead>
 		<tr>
 			<th class="text-left">Client ID</th>
+			<th class="text-left">License ID</th>
+			<th class="text-left">CL ID</th>
 			<th class="text-left">Contact Person</th>
 			<th class="text-left">Company Address</th>
 			<th class="text-left">Email Address</th>
@@ -10,7 +12,7 @@
 			<th class="text-left">License Key</th>
 			<th class="text-left">Company Name</th>
 			<th class="text-left">Duration</th>
-			<th class="text-left">Activation Date</th>
+			<th class="text-left">Effectivity Date</th>
 			<th class="text-left">Expiry Date</th>
 			<th class="text-left">Expiry Count</th>
 		</tr>
@@ -29,9 +31,21 @@
 			
 		// Modal Form Options
 		modalFrmContent = $('<div></div>').load(FRM_CLIENTS),
-		modalNewTitle = '<i class="fa fa-plus"></i> New Client Data',
-		modalEditTitle = '<i class="fa fa-pencil"></i> Edit Client Data',
-				
+		modalViewContent = $('<div></div>').load(VIEW_CLIENTS),
+		modalNewTitle = '<i class="fa fa-plus"></i> New Client Details',
+		modalEditTitle = '<i class="fa fa-pencil"></i> Edit Client Details',
+		modalViewTitle = '<i class="fa fa-info-circle"></i> Client Details',
+		
+		// Modal Buttons
+		modalBtnCancel = {
+			label: 'Close',
+			icon: 'fa fa-times',
+			cssClass: 'btn-primary',
+			action: function(dialogItself) {
+				BootstrapDialog.closeAll();	
+			}
+		},
+		
 		// DT Buttons Object
 		dtBtnNew = {		
 			name: 'new',			
@@ -71,9 +85,26 @@
 		},
 		dtBtnDetails = {						
 			name: 'details',
-			text: dtBtnDtlTxt,						
+			text: dtBtnDtlTxt,	
+			enabled: false,
 			className: 'btn-primary',
-			action: reloadDT
+			action: function(e, dt, node, config) {
+				BootstrapDialog.show({
+					closable: false,
+					title: modalViewTitle,
+					message: modalViewContent,
+					onshown: btnViewOnShown,
+					onhidden: function(dialogRef) {
+						//dt.ajax.reload();
+						//dt.button('edit:name').disable();
+						//dt.button('delete:name').disable();	
+						//dt.button('details:name').disable();	
+						$('#client-info').find('td[data-cell]').text('');
+						$('#license-info').find('td[data-cell]').text('');
+					},
+					buttons: [modalBtnCancel]
+				});
+			}			
 		},		
 		dtBtnReload = {						
 			name: 'reload',
@@ -97,6 +128,16 @@
 				modalBody = dialogRef.getModalBody();			
 			$.each(rowData, function(name, value) {
 				modalBody.find('input[data-field="' + name + '"]').val(value);
+				modalBody.find('td[data-cell="' + name + '"]').text(value);
+			});
+		}
+		
+		// Trigger on View Modal OnShown
+		function btnViewOnShown(dialogRef) {
+			var rowData = dt.row('.selected').data(),
+				modalBody = dialogRef.getModalBody();
+				console.log(rowData);
+			$.each(rowData, function(name, value) {
 				modalBody.find('td[data-cell="' + name + '"]').text(value);
 			});
 		}
@@ -130,55 +171,6 @@
 			dt.button('edit:name').disable();
 			dt.button('delete:name').disable();		
 			dt.button('details:name').disable();	
-		}
-		
-		// New & Edit Button Action 
-		function btnSaveAction(dialogRef) {
-			var isValid = STIC.FormValidation({
-				formId: '#dataClientsForm'
-			});		
-			if (isValid) {
-				var wsPost = '',			
-					postString = '',
-					JSONString = '',
-					JSONObject = {},
-					infoMessage = '',
-					modalBody = dialogRef.getModalBody(),
-					pkId = $('input[data-field="client_id"]'),
-					elements = modalBody.find('input[data-field], select[data-field]');
-				if (pkId.val() != '') {
-					wsPost = WS_CLIENT_UPDATE;
-					infoTitle = MSG_EDIT_REC_TITLE;
-					infoMessage = MSG_EDIT_REC_INFO;
-				} else {
-					wsPost = WS_CLIENT_INSERT;
-					infoTitle = MSG_ADD_REC_TITLE;			
-					infoMessage = MSG_ADD_REC_INFO;
-				}				
-				$.each(elements, function(idx, elem) {
-					var input = $(elem), 	
-						inputValue = input.val(),
-						inputField = input.attr('data-field');						
-					postString = '{"' + inputField + '":"' + inputValue + '"}';
-					$.extend(JSONObject, $.parseJSON(postString)); 
-				});					
-				JSONString = 'clientInfo=' + JSON.stringify(JSONObject);	
-				$.post(wsPost, JSONString, function(data, status) {
-					BootstrapDialog.closeAll();	
-					dt.ajax.reload();	
-					dt.button('edit:name').disable();
-					dt.button('delete:name').disable();		
-					dt.button('details:name').disable();	
-					BootstrapDialog.alert({
-						title: infoTitle,
-						message: infoMessage,	
-						type: BootstrapDialog.TYPE_PRIMARY,
-						callback: function(result) {
-							BootstrapDialog.closeAll();								
-						}
-					});				
-				});
-			}
 		}
 		
 		// Delete Button Action

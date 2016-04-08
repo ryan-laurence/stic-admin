@@ -32,6 +32,8 @@ var MSG_TITLE_BASIC = '<i class="fa fa-info-circle"></i> Information';
 // 
 var CD_CLIENT_LIST = [
 	{ data: 'client_id', visible: false, searchable: false },	
+	{ data: 'license_id', visible: false, searchable: false },	
+	{ data: 'cl_id', visible: false, searchable: false },	
 	{ data: 'client_contact', visible: false },
 	{ data: 'client_address', visible: false },
 	{ data: 'client_email', visible: false },
@@ -40,11 +42,11 @@ var CD_CLIENT_LIST = [
 	{ data: 'license_key', visible: false, searchable: false },
 	{ data: 'client_name' },	
 	{ data: 'license_duration' },
-	{ data: 'activation_date' },	
+	{ data: 'effectivity_date' },	
 	{ data: 'expiry_date' },
 	{ data: 'exp_count' }
 ];
-
+var VIEW_CLIENTS = 'pages/clients-details.html';
 var FRM_CLIENTS = 'pages/clients-form.html';
 var WS_CLIENT_LIST = '/stic-admin/services/ClientsInfoServices/getAllClientsList?response=application/json&';
 var WS_CLIENT_INSERT = '/stic-admin/services/ClientsInfoServices/addClients?response=application/json&';

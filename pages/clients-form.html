@@ -2,9 +2,9 @@
 <div class="navbar" style="margin-bottom: 15px;">
 	<div class="navbar-inner">
 		<ul class="nav nav-pills" id="nav-client">
-			<li class="active"><a href="#step1" data-toggle="tab" data-step="1">1. <i class="fa fa-users"></i> Client Details</a></li>
-			<li><a href="#step2" data-toggle="tab" data-step="2">2. <i class="fa fa-key"></i> License Details</a></li>
-			<li><a href="#step3" data-toggle="tab" data-step="3">3. <i class="fa fa-check"></i> Confirm Details</a></li>
+			<li class="active"><a href="#step1" data-toggle="tab" data-step="1">1. <i class="fa fa-users"></i> Client Information</a></li>
+			<li><a href="#step2" data-toggle="tab" data-step="2">2. <i class="fa fa-key"></i> License Information</a></li>
+			<li><a href="#step3" data-toggle="tab" data-step="3">3. <i class="fa fa-check"></i> Confirm Information</a></li>
 		</ul>
 	</div>
 </div>
@@ -67,7 +67,9 @@
 	</div>
   <div class="tab-pane fade" id="step2">
 		<form class="form-horizontal well no-margin-bottom pre-scrollable" id="dataLicenseForm">
-			<input type="hidden" data-field="expiration_date">
+			<input type="hidden" data-field="cl_id">
+			<input type="hidden" data-field="license_id">
+			<input type="hidden" data-field="expiry_date">
 			<div class="form-group">
 				<label class="control-label">License Duration <small>(in days)</small></label>
 				<input type="text" class="form-control" placeholder="Enter License Duration"
@@ -78,9 +80,9 @@
 			<div class="form-group">
 				<label class="control-label">Effective Date</label>
 				<input id="dp" type="text" class="form-control" placeholder="Enter Effective Date"
-					data-field="effective_date" 
+					data-field="effectivity_date" 
 					data-fv-notempty="true"
-					data-fv-notempty-msg="Effective Date is required.">
+					data-fv-notempty-msg="Effectivity Date is required.">
 			</div>
 		</form>
 		<hr style="margin-top: 15px; margin-bottom: 15px;">
@@ -98,7 +100,7 @@
 	</div>
   <div class="tab-pane fade" id="step3">
 		<div class=" well no-margin-bottom pre-scrollable" style="padding: 10px 15px 10px 15px">
-			<h5><i class="fa fa-users"></i> <strong>Client Details</strong></h5>
+			<h5><i class="fa fa-users"></i> <strong>Client Information</strong></h5>
 			<table id="client-info" class="table table-bordered table-striped" style="clear: both;">
 				<tbody>
 					<tr>
@@ -127,7 +129,7 @@
 					</tr>
 				</tbody>
 			</table>
-			<h5><i class="fa fa-key"></i> <strong>License Details</strong></h5>
+			<h5><i class="fa fa-key"></i> <strong>License Information</strong></h5>
 			<table id="license-info" class="table table-bordered table-striped" style="clear: both;">
 				<tbody>
 					<tr>
@@ -136,11 +138,11 @@
 					</tr>			
 					<tr>
 						<td>Effective Date</td>
-						<td data-cell="effective_date"></td>
+						<td data-cell="effectivity_date"></td>
 					</tr>
 					<tr>
 						<td>Expiration Date</td>
-						<td data-cell="expiration_date"></td>
+						<td data-cell="expiry_date"></td>
 					</tr>
 				</tbody>
 			</table>			
@@ -205,21 +207,44 @@
 				'#dataLicenseForm input[data-field]',
 				postString = '',
 				JSONString = '',
-				JSONObject = {};
+				JSONObject = {},
+				infoTitle = '',
+				infoMessage = '',
+				wsPost = '';
+				
+			var pkId = $('#dataClientsForm input[data-field="client_id"]').val();
+			//$('#dataLicenseForm input[data-field="cl_id"]').val()
+			//$('#dataLicenseForm input[data-field="license_id"]').val()			
+				
+			if (pkId != '') {
+				wsPost = WS_CLIENT_UPDATE;
+				infoTitle = MSG_TITLE_EDIT_REC;
+				infoMessage = MSG_INFO_EDIT_REC;
+			} else {
+				wsPost = WS_CLIENT_INSERT;
+				infoTitle = MSG_TITLE_ADD_REC;			
+				infoMessage = MSG_INFO_ADD_REC;
+			}
+
 			$.each($(elements), function(idx, elem) {
 				var field = $(elem).attr('data-field'), value = $(elem).val();
 				postString = '{"' + field + '":"' + value + '"}';
 				$.extend(JSONObject, $.parseJSON(postString)); 
+			});		
+			
+			JSONString = 'clientsInfo=' + JSON.stringify(JSONObject);	
+			console.log(JSONString);
+			$.post(wsPost, JSONString, function(data, status) {
+				BootstrapDialog.closeAll();	
+				BootstrapDialog.alert({
+					title: infoTitle,
+					message: infoMessage,	
+					type: BootstrapDialog.TYPE_PRIMARY,
+					callback: function(result) {
+						BootstrapDialog.closeAll();								
+					}
+				});				
 			});
-			JSONString = 'clientInfo=' + JSON.stringify(JSONObject);	
-			BootstrapDialog.alert({
-				title: 'Call WS',
-				message: JSON.stringify(JSONObject, null, 2),	
-				type: BootstrapDialog.TYPE_DANGER,
-				callback: function(result) {
-					BootstrapDialog.closeAll();								
-				}
-			});			
 		});
 		
 		// Validate current form before a new Tab is shown
@@ -244,7 +269,7 @@
 					effectDate = $('#dataLicenseForm input[data-field="effective_date"]').val(),
 					duration = $('#dataLicenseForm input[data-field="license_duration"]').val(),
 					expiration = moment(effectDate).add(parseInt(duration), 'd').format('YYYY-MM-DD');
-					$('#dataLicenseForm input[data-field="expiration_date"]').val(expiration);
+					$('#dataLicenseForm input[data-field="expiry_date"]').val(expiration);
 				$.each($(elements), function(idx, elem) {
 					var field = $(elem).attr('data-field'), value = $(elem).val();
 					$('td[data-cell="' + field + '"]').text(value); 
