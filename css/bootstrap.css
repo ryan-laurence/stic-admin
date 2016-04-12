@@ -12,9 +12,10 @@ html {
 }
 body {
   margin: 0;
-background: #232526; /* fallback for old browsers */
-background: -webkit-linear-gradient(to left, #232526 , #414345); /* Chrome 10-25, Safari 5.1-6 */
-background: linear-gradient(to left, #232526 , #414345); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+	background: #4B79A1; /* fallback for old browsers */
+	background: -webkit-linear-gradient(to left, #4B79A1 , #283E51); /* Chrome 10-25, Safari 5.1-6 */
+	background: linear-gradient(to left, #4B79A1 , #283E51); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
 }
 article,
 aside,
@@ -1093,9 +1094,9 @@ body {
   font-size: 14px;
   line-height: 1.42857143;
   color: #333;
-background: #232526; /* fallback for old browsers */
-background: -webkit-linear-gradient(to left, #232526 , #414345); /* Chrome 10-25, Safari 5.1-6 */
-background: linear-gradient(to left, #232526 , #414345); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+	background: #4B79A1; /* fallback for old browsers */
+	background: -webkit-linear-gradient(to left, #4B79A1 , #283E51); /* Chrome 10-25, Safari 5.1-6 */
+	background: linear-gradient(to left, #4B79A1 , #283E51); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 input,
 button,
@@ -3092,8 +3093,8 @@ fieldset[disabled] .btn-default.active {
 }
 .btn-primary {
   color: #fff;
-  background: linear-gradient(#56585D, #2F3034);
-  border-color: #2F3034;
+  background-image:	linear-gradient(#337AB7 0px, #2B669A 100%);
+  border-color: #337ab7;
 }
 .btn-primary:hover,
 .btn-primary:focus,
@@ -3102,8 +3103,8 @@ fieldset[disabled] .btn-default.active {
 .btn-primary.active,
 .open > .dropdown-toggle.btn-primary {
   color: #fff;
-  background-color: #2F3034;
-  border-color: #56585D;
+  background-color: #286090;
+  border-color: #204d74;
 }
 .btn-primary:active,
 .btn-primary.active,
@@ -3128,8 +3129,8 @@ fieldset[disabled] .btn-primary:active,
 .btn-primary.disabled.active,
 .btn-primary[disabled].active,
 fieldset[disabled] .btn-primary.active {
-  background-color: #2F3034;
-  border-color: #56585D;
+  background-color: #337ab7;
+  border-color: #2e6da4;
 }
 .btn-primary .badge {
   color: #337ab7;
@@ -4512,15 +4513,15 @@ fieldset[disabled] .navbar-default .btn-link:focus {
   color: #ccc;
 }
 .navbar-inverse {
-  /*background-color: #337ab7;
+  background-color: #337ab7;
   border-color: #337ab7;
-  background-image: linear-gradient(#337AB7 0px, #2B669A 100%);*/
-  background-color: #2F3034;
+  background-image: linear-gradient(#337AB7 0px, #2B669A 100%);
+  /*background-color: #2F3034;
   border-color: #2F3034;  
   background: linear-gradient(#56585D, #2F3034);
   border-bottom-color: #000000;
   border-bottom-style: solid;
-  border-bottom-width: 1px;
+  border-bottom-width: 1px;*/
 }
 .navbar-inverse .navbar-brand {
   color: #fff;
@@ -5334,7 +5335,7 @@ a.list-group-item-danger.active:focus {
 .panel {
   margin-bottom: 20px;
   background-color: #fff;
-  border: 1px solid #2F3034;  
+  border: 1px solid transparent;  
   -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
           box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
 }
@@ -5342,8 +5343,10 @@ a.list-group-item-danger.active:focus {
   padding: 15px;
 }
 .panel-heading {
-  padding: 10px 15px;
-  border-bottom: 1px solid #2F3034;
+	padding: 10px 15px;
+  border-bottom: 1px solid transparent;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
 }
 .panel-heading > .dropdown .dropdown-toggle {
   color: inherit;
@@ -5578,24 +5581,24 @@ a.list-group-item-danger.active:focus {
   border-bottom-color: #ddd;
 }
 .panel-primary {
-  /*border-color: #337ab7;*/
-  border-color: #2F3034;
+  border-color: #337ab7;
+ /* border-color: #2F3034;*/
 }
 .panel-primary > .panel-heading {
   color: #fff;
-  /*background-color: #337ab7;
+  background-color: #337ab7;
   background-image:	linear-gradient(#337AB7 0px, #2B669A 100%);
-  border-color: #337ab7;*/
+  border-color: #337ab7;
   /*background-color:#222;
   background-image:-webkit-radial-gradient(50% 50%,#333,#111);
   background-image:-moz-radial-gradient(50% 50%,#333,#111);
   background-image:-ms-radial-gradient(50% 50%,#333,#111);
   background-image:-o-radial-gradient(50% 50%,#333,#111);
   background-image:radial-gradient(50% 50%,#333,#111);*/
-  background: linear-gradient(#56585D, #2F3034);
+  /*background: linear-gradient(#56585D, #2F3034);
   border-bottom-color: #000000;
   border-bottom-style: solid;
-  border-bottom-width: 1px;
+  border-bottom-width: 1px;*/
 }
 .panel-primary > .panel-heading + .panel-collapse > .panel-body {
   border-top-color: #337ab7;

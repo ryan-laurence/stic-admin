@@ -42,8 +42,8 @@
   background-color: #5bc0de;
 }
 .bootstrap-dialog.type-primary .modal-header {
-  /*background-color: #337ab7;*/
-  background: linear-gradient(#56585D, #2F3034);
+  background-color: #337ab7;
+  background: linear-gradient(#337AB7 0px, #2B669A 100%);
   border-bottom-color: #000000;
   border-bottom-style: solid;
   border-bottom-width: 1px;
