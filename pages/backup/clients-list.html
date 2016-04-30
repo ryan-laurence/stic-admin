@@ -1,0 +1,33 @@
+<table class="display compact" id="table-data">
+	<thead>
+		<tr>
+			<th class="text-left">Client ID</th>
+			<th class="text-left">Company Address</th>
+			<th class="text-left">Company Name</th>
+			<th class="text-left">Contact Person</th>			
+			<th class="text-left">Email Address</th>
+			<th class="text-left">Phone</th>
+			<th class="text-left">Mobile</th>			
+		</tr>
+	</thead>
+	<tbody>		
+	</tbody>
+</table>		
+<script>
+	$(function () {		
+		STIC.ClientDetails({
+			pkey: 'client_id',
+			objectId: 'clientsInfo',
+			modTitle: 'Client Details',
+			formId: '#formClientDetails',
+			formSrc: FORM_CLIENT_DETAILS,
+			viewSrc: VIEW_CLIENT_DETAILS,
+			cd: CD_CLIENT_LIST,
+			ds: DEFAULT_DS_REPORTS,
+			wsList: WS_CLIENT_LIST,
+			wsInsert: WS_CLIENT_INSERT,
+			wsUpdate: WS_CLIENT_UPDATE,
+			wsDelete: WS_CLIENT_DELETE
+		});
+	});
+</script>

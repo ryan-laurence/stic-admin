@@ -1,0 +1,275 @@
+<hr style="margin-top: 15px; margin-bottom: 15px;">
+<div class="navbar" style="margin-bottom: 15px;">
+	<div class="navbar-inner">
+		<ul class="nav nav-pills" id="nav-client">
+			<li class="active"><a href="#step1" data-toggle="tab" data-step="1">1. <i class="fa fa-users"></i> Client Information</a></li>
+			<li><a href="#step2" data-toggle="tab" data-step="2">2. <i class="fa fa-key"></i> License Information</a></li>
+			<li><a href="#step3" data-toggle="tab" data-step="3">3. <i class="fa fa-check"></i> Confirm Information</a></li>
+		</ul>
+	</div>
+</div>
+<div class="tab-content" id="tab-client">
+  <div class="tab-pane fade in active" id="step1">
+		<form class="form-horizontal well no-margin-bottom pre-scrollable" id="dataClientsForm">
+			<input type="hidden" data-field="client_id">
+			<div class="form-group">
+				<label class="control-label">Company Name</label>
+				<input type="text" class="form-control" placeholder="Enter Company Name"
+					data-field="client_name" 
+					data-fv-notempty="true">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Contact Person</label>
+				<input type="text" class="form-control" placeholder="Enter Contact Person" 
+					data-field="client_contact"
+					data-fv-notempty="true">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Client Address</label>
+				<input type="text" class="form-control" placeholder="Enter Client Address" 
+					data-field="client_address"
+					data-fv-notempty="true">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Email Address</label>
+				<input type="text" class="form-control" placeholder="Enter Email Address" 
+					data-field="client_email"
+					data-fv-notempty="true">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Phone Number</label>
+				<input type="text" class="form-control" placeholder="Enter Phone Number" 
+					data-field="client_phone"
+					data-fv-notempty="true">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Mobile Number</label>
+				<input type="text" class="form-control" placeholder="Enter Mobile Number" 
+					data-field="client_mobile"
+					data-fv-notempty="true">
+			</div>
+		</form>
+		<hr style="margin-top: 15px; margin-bottom: 15px;">
+		<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" style="margin-bottom: 5px;">	
+			<div class="btn-group pull-left" role="group" style="margin-bottom: 0px;">
+				<button type="button" class="btn btn-primary cancel"><i class="fa fa-ban"></i> Cancel</button>
+			</div>
+			<div class="btn-group pull-right" role="group" style="margin-bottom: 0px;">
+				<button type="button" class="btn btn-primary next"><i class="fa fa-step-forward"></i> Next</button>
+			</div>
+		</div>
+	</div>
+  <div class="tab-pane fade" id="step2">
+		<form class="form-horizontal well no-margin-bottom pre-scrollable" id="dataLicenseForm">
+			<input type="hidden" data-field="cl_id">
+			<input type="hidden" data-field="license_id">
+			<input type="hidden" data-field="expiry_date">
+			<div class="form-group">
+				<label class="control-label">License Duration <small>(in days)</small></label>
+				<input type="text" class="form-control" placeholder="Enter License Duration"
+					data-field="license_duration" 
+					data-fv-notempty="true"
+					data-fv-integer="true">
+			</div>
+			<div class="form-group">
+				<label class="control-label">Effective Date</label>
+				<input id="dp" type="text" class="form-control" placeholder="Enter Effective Date"
+					data-field="effectivity_date" 
+					data-fv-notempty="true">
+			</div>
+		</form>
+		<hr style="margin-top: 15px; margin-bottom: 15px;">
+		<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" style="margin-bottom: 5px;">			
+			<div class="btn-group pull-left" role="group" style="margin-bottom: 0px;">
+				<button type="button" class="btn btn-primary cancel"><i class="fa fa-ban"></i> Cancel</button>
+			</div>
+			<div class="btn-group pull-right" role="group" style="margin-bottom: 0px;">
+				<button type="button" class="btn btn-primary next"><i class="fa fa-step-forward"></i> Next</button>
+			</div>
+			<div class="btn-group pull-right" role="group" style="margin-bottom: 0px;">
+				<button type="button" class="btn btn-primary prev"><i class="fa fa-step-backward"></i> Previous</button>
+			</div>
+		</div>
+	</div>
+  <div class="tab-pane fade" id="step3">
+		<div class=" well no-margin-bottom pre-scrollable" style="padding: 10px 15px 10px 15px">
+			<h5><i class="fa fa-users"></i> <strong>Client Information</strong></h5>
+			<table id="client-info" class="table table-bordered table-striped" style="clear: both;">
+				<tbody>
+					<tr>
+						<td width="30%">Company Name</td>
+						<td width="70%" data-cell="client_name"></td>
+					</tr>
+					<tr>
+						<td>Contact Person</td>
+						<td data-cell="client_contact"></td>
+					</tr>
+					<tr>
+						<td>Client Address</td>
+						<td data-cell="client_address"></td>
+					</tr>
+					<tr>
+						<td>Email Address</td>
+						<td data-cell="client_email"></td>
+					</tr>
+					<tr>
+						<td>Phone Number</td>
+						<td data-cell="client_phone"></td>
+					</tr>
+					<tr>
+						<td>Mobile Number</td>
+						<td data-cell="client_mobile"></td>
+					</tr>
+				</tbody>
+			</table>
+			<h5><i class="fa fa-key"></i> <strong>License Information</strong></h5>
+			<table id="license-info" class="table table-bordered table-striped" style="clear: both;">
+				<tbody>
+					<tr>
+						<td width="30%">Duration</td>
+						<td width="70%" data-cell="license_duration"></td>
+					</tr>			
+					<tr>
+						<td>Effective Date</td>
+						<td data-cell="effectivity_date"></td>
+					</tr>
+					<tr>
+						<td>Expiration Date</td>
+						<td data-cell="expiry_date"></td>
+					</tr>
+				</tbody>
+			</table>			
+		</div>
+		<hr style="margin-top: 20px; margin-bottom: 15px;">
+		<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" style="margin-bottom: 5px;">			
+			<div class="btn-group pull-left" role="group" style="margin-bottom: 0px;">
+				<button type="button" class="btn btn-primary cancel"><i class="fa fa-ban"></i> Cancel</button>
+			</div>
+			<div class="btn-group pull-right" role="group" style="margin-bottom: 0px;">
+				<button type="button" class="btn btn-primary final"><i class="fa fa-floppy-o"></i> Save Details</button>
+			</div>
+			<div class="btn-group pull-right" role="group" style="margin-bottom: 0px;">
+				<button type="button" class="btn btn-primary prev"><i class="fa fa-step-backward"></i> Previous</button>
+			</div>
+		</div>
+  </div>
+</div>
+<style>
+	.form-control {
+		padding: 8px;
+		font-size: 14px;
+	}
+</style>
+<script>
+	$(function() {	
+	
+		// Effective Date
+		var dp = $('#dp');
+		dp.datetimepicker({
+			showClose: true,
+			showClear: true,
+			viewMode: 'months',
+			format: 'YYYY-MM-DD'
+		});		
+		dp.data('DateTimePicker').minDate(new Date());
+
+		// Next Button
+		$('.next').on('click', function() {
+			var currTab = $(this).parents('.tab-pane'),
+				nextId = $(currTab).next().attr('id');
+			$('[href="#' + nextId + '"]').tab('show');
+			return false;
+		});
+		
+		// Previous Button
+		$('.prev').on('click', function() {
+			console.log($(this).parents('.tab-pane').prev().attr('id'));
+			var prevId = $(this).parents('.tab-pane').prev().attr('id');			
+			$('[href="#' + prevId + '"]').tab('show');			
+			return false;	
+		});
+		
+		// Cancel Button
+		$('.cancel').on('click', function() {
+			BootstrapDialog.closeAll();
+		});
+		
+		// Save Details Button
+		$('.final').on('click', function() {
+			var elements = '#dataClientsForm input[data-field], ' + 
+				'#dataLicenseForm input[data-field]',
+				postString = '',
+				JSONString = '',
+				JSONObject = {},
+				infoTitle = '',
+				infoMessage = '',
+				wsPost = '';
+				
+			var pkId = $('#dataClientsForm input[data-field="client_id"]').val();
+			//$('#dataLicenseForm input[data-field="cl_id"]').val()
+			//$('#dataLicenseForm input[data-field="license_id"]').val()			
+				
+			if (pkId != '') {
+				wsPost = WS_CLIENT_UPDATE;
+				infoTitle = MSG_TITLE_EDIT_REC;
+				infoMessage = MSG_INFO_EDIT_REC;
+			} else {
+				wsPost = WS_CLIENT_INSERT;
+				infoTitle = MSG_TITLE_ADD_REC;			
+				infoMessage = MSG_INFO_ADD_REC;
+			}
+
+			$.each($(elements), function(idx, elem) {
+				var field = $(elem).attr('data-field'), value = $(elem).val();
+				postString = '{"' + field + '":"' + value + '"}';
+				$.extend(JSONObject, $.parseJSON(postString)); 
+			});		
+			
+			JSONString = 'clientsInfo=' + JSON.stringify(JSONObject);	
+			console.log(JSONString);
+			$.post(wsPost, JSONString, function(data, status) {
+				BootstrapDialog.closeAll();	
+				BootstrapDialog.alert({
+					title: infoTitle,
+					message: infoMessage,	
+					type: BootstrapDialog.TYPE_PRIMARY,
+					callback: function(result) {
+						BootstrapDialog.closeAll();								
+					}
+				});				
+			});
+		});
+		
+		// Validate current form before a new Tab is shown
+		$('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+			var isValid = true,
+				currId = $(e.relatedTarget).attr('href');			
+			if (currId == '#step1') 
+				isValid = STIC.FormValidation({ formId: '#dataClientsForm' });		
+			if (currId == '#step2') 
+				isValid = STIC.FormValidation({ formId: '#dataLicenseForm' });	
+			return isValid;
+		})
+		
+		// Assign data values when Tab 3 is shown
+		$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+			var targetId = $(e.target).attr('href');			
+			STIC.FormValidation({ formId: '#dataClientsForm', clearHelpBlocks: true });
+			STIC.FormValidation({ formId: '#dataLicenseForm', clearHelpBlocks: true });		
+			if (targetId == '#step3') {
+				var elements = '#dataClientsForm input[data-field], ' + 
+					'#dataLicenseForm input[data-field]',
+					effectDate = $('#dataLicenseForm input[data-field="effective_date"]').val(),
+					duration = $('#dataLicenseForm input[data-field="license_duration"]').val(),
+					expiration = moment(effectDate).add(parseInt(duration), 'd').format('YYYY-MM-DD');
+					$('#dataLicenseForm input[data-field="expiry_date"]').val(expiration);
+				$.each($(elements), function(idx, elem) {
+					var field = $(elem).attr('data-field'), value = $(elem).val();
+					$('td[data-cell="' + field + '"]').text(value); 
+				});
+			}
+		})
+
+	});
+</script>
+	

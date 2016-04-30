@@ -1,0 +1,26 @@
+<form class="form-horizontal well no-margin-bottom" id="formLicenseDetails">
+	<input type="hidden" data-field="cl_id">
+	<div class="form-group">
+		<label class="control-label" for="client_name">Client Name</label>
+		<input type="text" class="form-control" data-id="client_name" readonly>
+	</div>
+	<div class="form-group">
+		<label class="control-label" for="license_duration">License Duration</label>
+		<input type="text" class="form-control" placeholder="Enter License Duration"
+			data-field="license_duration" 
+			data-fv-notempty="true"
+			data-fv-integer="true">
+	</div>
+	<div class="form-group">
+		<label class="control-label" for="license_status">License Status</label>
+		<select class="form-control" data-field="license_status">
+			<option value="1">Active</option>
+			<option value="0" selected>Inactive</option>
+		</select>
+	</div>
+</form>
+<script>
+	$(function () {		
+		$('select[data-field="license_status"]').selectpicker();
+	});
+</script>

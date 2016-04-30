@@ -1,0 +1,61 @@
+<style type="text/css">
+	div.form-group {
+		width: 49% !important;
+		margin-left: 0px !important;
+		margin-right: 0px !important;
+		padding-right: 0px !important;
+	}
+</style>
+<form class="form-horizontal well no-margin-bottom" id="formClientDetails">
+	<input type="hidden" data-field="client_id">
+	<div class="row">
+		<div class="form-group col-md-6">
+			<label class="control-label" for="client_name">Client Name</label>
+			<input type="text" class="form-control" placeholder="Enter Client Name"
+				data-field="client_name"
+				data-fv-notempty="true">
+		</div>
+		<div class="form-group col-md-6">
+			<label class="control-label" for="client_email">Email Address</label>
+			<input type="text" class="form-control" placeholder="Enter Email Address"
+				data-field="client_email"
+				data-fv-notempty="true">
+		</div>
+		<div class="form-group col-md-6">
+			<label class="control-label" for="client_contact">Contact Person</label>
+			<input type="text" class="form-control" placeholder="Enter Contact Person"
+				data-field="client_contact"
+				data-fv-notempty="true">
+		</div>
+		<div class="form-group col-md-6">
+			<label class="control-label" for="client_phone">Phone Number</label>
+			<input type="text" class="form-control" placeholder="Enter Phone Number"
+				data-field="client_phone"
+				data-fv-notempty="true">
+		</div>
+		<div class="form-group col-md-6">
+			<label class="control-label" for="client_address">Client Address</label>
+			<input type="text" class="form-control" placeholder="Enter Client Address"
+				data-field="client_address"
+				data-fv-notempty="true">
+		</div>
+		<div class="form-group col-md-6">
+			<label class="control-label" for="client_mobile">Mobile Number</label>
+			<input type="text" class="form-control" placeholder="Enter Mobile Number"
+				data-field="client_mobile"
+				data-fv-notempty="true">
+		</div>
+		<div class="form-group col-md-6">
+			<label class="control-label" for="status">Client Status</label>
+			<select class="form-control" data-field="status">
+				<option value="1" selected>Active</option>
+				<option value="0">Inactive</option>
+			</select>
+		</div>
+	</div>
+</form>
+<script>
+	$(function () {
+		$('select[data-field="status"]').selectpicker();
+	});
+</script>

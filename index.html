@@ -15,14 +15,14 @@
 						<img src="images/vendor-logo.gif" class="img-responsive" alt="" />		
 						<hr>
 						<div class="alert alert-info" role="alert" style="text-align: left; margin-bottom: 20px;">
-							<i class="fa fa-info-circle"></i> Enter your <strong>Username</strong> and <strong>Password</strong> to access the system administrator page.
+							<i class="fa fa-info-circle fa-3x fa-pull-left"></i> Enter your <strong>Username</strong> and <strong>Password</strong> to access the system administrator page.
 						</div>
 						<div class="form-group">
 							<div class="input-group">
 								<span class="input-group-addon">
 									<i class="fa fa-user"></i>
 								</span> 
-								<input type="text" class="form-control input-lg" placeholder="Username" data-field="user_name" autofocus>
+								<input type="text" class="form-control input-lg" placeholder="Username" id="username" autofocus>
 							</div>
 						</div>
 						<div class="form-group">
@@ -30,7 +30,7 @@
 								<span class="input-group-addon">
 									<i class="fa fa-lock"></i>
 								</span> 
-								<input type="password" class="form-control input-lg" placeholder="Password" data-field="user_password" autofocus>
+								<input type="password" class="form-control input-lg" placeholder="Password" id="password" autofocus>
 							</div>
 						</div>
 						<button type="button" name="go" class="btn btn-lg btn-primary btn-block" id="btnLogin"><i class="fa fa-sign-in"></i> Login</button>	
@@ -49,30 +49,27 @@
 		<script type="text/javascript" src="js/jquery-widget.min.js"></script>
 		<script type="text/javascript" src="js/bootstrap.min.js"></script>
 		<script type="text/javascript" src="js/bootstrap-dialog.min.js"></script>
+		<script type="text/javascript" src="js/bootstrap-waitingfor.js"></script>
 		<script type="text/javascript" src="js/stic-admin-constants.js"></script>
 		<script type="text/javascript" src="js/stic-admin-functions.js"></script>	
 		<script type="text/javascript">
 			$(function () { 
-				console.log('Cookies Before Login: ' + document.cookie);
-				console.log(STIC);
-				// Check Cookies				
-				//STIC.checkIfLoggedIn();				
-				
+				// Progress Bar Start
+				$(document).ajaxStart(function () {
+					waitingDialog.show();
+				});
+
+				// Progress Bar End
+				$(document).ajaxStop(function () {
+					waitingDialog.hide();
+				});
+			
+				// Check if Logged in already
+				STIC.CheckIfValid(false);
+			
 				// Login Button
-				$('#btnLogin').on('click', function() {
-					var userName = $('input[data-field="user_name"]').val(),
-						userPass = $('input[data-field="user_password"]').val();				
-					if (userName == '' || userPass == '') {							
-						BootstrapDialog.alert({
-							title: MSG_TITLE_BASIC,
-							message: 'Username or Password must not be empty!',
-							type: BootstrapDialog.TYPE_DANGER
-						});
-					} else {					
-						STIC.createCookie('stic-user', 1, 1);
-						STIC.createCookie('stic-name', userName, 1);
-						window.location = DEFAULT_ROOT + 'main.html';	
-					}
+				$('#btnLogin').on('click', function () {
+					STIC.Login();
 				});
 			});
 		</script>
