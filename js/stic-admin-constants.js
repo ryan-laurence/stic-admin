@@ -2,9 +2,12 @@
 var CONSOLE_LOG = true;
 var DEFAULT_ROOT = '/stic-admin/';
 var DEFAULT_PAGE_LOC = 'pages/';
+var DEFAULT_COOKIE_LIFE = 1;
 var DEFAULT_PAGE_LENGTH = 10;
 var DEFAULT_PAGE_FILE_EXT = '.html';
 var DEFAULT_WRAPPER_ID = '#main-wrapper';
+var DEFAULT_COOKIE_USERID = 'stic-admin-userid';
+var DEFAULT_COOKIE_USERNAME = 'stic-admin-username';
 
 // Default Datasource
 var DEFAULT_DS = 'response.record-list.record';
@@ -12,14 +15,22 @@ var DEFAULT_DS_REPORTS = 'response.report-list.report';
 
 // Default DataTables Settings
 var DEFAULT_DT_SETTINGS = {
+	processing: false,
+	lengthChange: false,
 	pagingType: 'full',
 	language: {
-		paginate: {
-			first: '<i class="fa fa-fast-backward"></i> First',
-			previous: '<i class="fa fa-backward"></i> Previous',							
-			next: 'Next <i class="fa fa-forward"></i>',
-			last: 'Last <i class="fa fa-fast-forward"></i>'
-		}
+		paginate: {		
+			next: '<i class="fa fa-forward"></i>',
+			last: '<i class="fa fa-fast-forward"></i>',
+			previous: '<i class="fa fa-backward"></i>',
+			first: '<i class="fa fa-fast-backward"></i>'
+		},
+		processing: 
+			'<div class="indicator">' +
+				'<i class="fa fa-cog fa-spin fa-2x fa-fw margin-bottom"></i> ' +
+				'Please wait, loading data.' +
+			'</div>',
+		search: '<i class="fa fa-search"></i>'
 	}
 }
 
@@ -60,13 +71,15 @@ var WS_CLIENT_DELETE = '/stic-admin/services/ClientsInfoServices/updateClientsBy
 CD_LIST_LICENSES = [
 	{ data: 'cl_id', visible: false, searchable: false },	
 	{ data: 'client_id', visible: false, searchable: false },	
-	{ data: 'client_name' },		
+	{ data: 'client_name', visible: false, searchable: false },		
+	{ data: 'serial_number' },
 	{ data: 'license_key' },
 	{ data: 'license_status' },
 	{ data: 'license_duration' },
 	{ data: 'activation_date' },		
-	{ data: 'expiration_date' },	
-	{ data: 'date_modified', visible: false, searchable: false }
+	{ data: 'expiration_date', name: 'expiration_date' },	
+	{ data: 'date_modified', visible: false, searchable: false },
+	{ data: 'filename', visible: false, searchable: false }
 ];
 var VIEW_LICENSE_DETAILS = 'pages/licenses-details.html';
 var FORM_NEW_LICENSE_DETAILS = 'pages/licenses-form-new.html';
@@ -76,13 +89,30 @@ var WS_INSERT_LICENSES = '/stic-admin/services/ClientsInfoServices/addNewClientL
 var WS_UPDATE_LICENSES = '/stic-admin/services/ClientLicensesInfoServices/updateClientLicenses?response=application/json&';
 
 // Users
-var WS_USER_CHECK = '/scaletech/services/UserInfoServices/getUserByNamePassList?response=application/json&';
-var WS_USER_AUTHENTICATE = '/scaletech/services/UserInfoServices/checkIfUserIsAuthentication?response=application/json&';
-var WS_USER_REMOVE_FROM_AUDIT = '/scaletech/services/UserInfoServices/removeUser?response=application/json&';
+var WS_USER_CHECK = '/stic-admin/services/UserInfoServices/getUserByNamePassList?response=application/json&';
+var WS_USER_AUTHENTICATE = '/stic-admin/services/UserInfoServices/checkIfUserIsAuthentication?response=application/json&';
+var WS_USER_REMOVE_FROM_AUDIT = '/stic-admin/services/UserInfoServices/removeUser?response=application/json&';
 
 // Button Labels
+var BTN_LABEL_NEW_RECORD = '<i class="fa fa-plus"></i>';
+var BTN_LABEL_EDIT_RECORD = '<i class="fa fa-pencil"></i>';
+var BTN_LABEL_DELETE_RECORD = '<i class="fa fa-trash-o"></i>';
+var BTN_LABEL_DETAILS_RECORD = '<i class="fa fa-info-circle"></i>';
+var BTN_LABEL_REFRESH_RECORD = '<i class="fa fa-refresh"></i>';
 var BTN_LABEL_CONFIRM_UPDATE = '<i class="fa fa-pencil"></i> Confirm Update';
-var BTN_LABEL_CANCEL_UPDATE = '<i class="fa fa-ban"></i> Cancel';
+var BTN_LABEL_CONFIRM_LOGOUT = '<i class="fa fa-sign-out"></i> Confirm Logout';
+var BTN_LABEL_CANCEL = '<i class="fa fa-ban"></i> Cancel';
+
+// Button Title Attribute
+var BTN_TITLE_NEW_RECORD = 'New';
+var BTN_TITLE_EDIT_RECORD = 'Edit';
+var BTN_TITLE_DELETE_RECORD = 'Delete';
+var BTN_TITLE_REFRESH_RECORD = 'Refresh Data Table';
+var BTN_TITLE_COPY = 'Copy Data to Clipboard';
+var BTN_TITLE_EXPORT_CSV = 'Export Data to CSV File';
+var BTN_TITLE_EXPORT_EXCEL = 'Export Data to Excel File';
+var BTN_TITLE_EXPORT_PDF = 'Export Data to PDF File';
+var BTN_TITLE_PRINT_RECORD = 'Print Data';
 
 // Form Validation Messages
 var MSG_FV_NOTEMPTY = 'This field is required and should not be empty.';
@@ -95,26 +125,22 @@ var MSG_TITLE_INFO = '<i class="fa fa-info-circle"></i> Information';
 var MSG_TITLE_ADD_REC = '<i class="fa fa-info-circle"></i> Information';
 var MSG_TITLE_EDIT_REC = '<i class="fa fa-info-circle"></i> Information';
 var MSG_TITLE_DEL_REC = '<i class="fa fa-info-circle"></i> Information';
-var MSG_TITLE_WS_ERROR = '<i class="fa fa-exclamation-circle"></i> Web Service Error';
-var MSG_TITLE_CONFIRM_LOGOUT = '<i class="fa fa-info-circle"></i> Confirm Logout';
-var MSG_TITLE_CONFIRM_UPDATE = '<i class="fa fa-question-circle"></i> Confirm Update';
-var MSG_TITLE_CONFIRM_DELETE = '<i class="fa fa-question-circle"></i> Confirm Deletion';
 
 // CRUD Messages
-var MSG_INFO_ADD_REC = '<strong>Success</strong>. A new record has been <strong>created</strong> in the system.';
-var MSG_INFO_EDIT_REC = '<strong>Success</strong>. The selected record was <strong>updated</strong> in the system.';
-var MSG_INFO_DEL_REC = '<strong>Success</strong>. The selected record was <strong>deleted</strong> from the system.';
-var MSG_INFO_WS_ERROR = '<div class="alert alert-danger" role="alert" style="margin-bottom: 5px;"><i class="fa fa-exclamation-circle fa-4x fa-pull-left"></i> Your request was <strong>not successful</strong> because there was an <strong>error</strong> in the Web Service response. If issue still persists, please contact your System Developer.</div>';
+var MSG_INFO_ADD_REC = '<div class="alert alert-success all-middle no-margin-bottom" role="alert"><i class="fa fa-check-circle fa-2x"></i> The new record was created successfully in the system.</div>';
+var MSG_INFO_EDIT_REC = '<div class="alert alert-success all-middle no-margin-bottom" role="alert"><i class="fa fa-check-circle fa-2x"></i> The selected record was updated successfully in the system.</div>';
+var MSG_INFO_DEL_REC = '<div class="alert alert-success all-middle no-margin-bottom" role="alert"><i class="fa fa-check-circle fa-2x"></i> The selected record was deleted successfully from the system.</div>';
+var MSG_INFO_WS_ERROR = '<div class="alert alert-danger no-margin-bottom" role="alert"><i class="fa fa-exclamation-circle fa-4x fa-pull-left"></i> Your request was not successful because there was an error in the Web Service response. If issue still persists, please contact your System Developer.</div>';
 
 // Confirm Messages
-var MSG_CONFIRM_LOGOUT = 'Are you sure you want to logout of the system?';
-var MSG_CONFIRM_DELETE_RECORD = '<div class="alert alert-danger" role="alert" style="margin-bottom: 5px;"><i class="fa fa-exclamation-circle fa-4x fa-pull-left"></i> The changes you are requesting will <strong>delete</strong> the selected record from the system. Please <strong>confirm</strong> if you want to perform this action. Press <strong>OK</strong> to continue.</div>';
-var MSG_CONFIRM_UPDATE_RECORD = '<div class="alert alert-danger" role="alert" style="margin-bottom: 5px;"><i class="fa fa-exclamation-circle fa-4x fa-pull-left"></i>You are about to <strong>update</strong> an existing license which will have an impact on the client\'s side. Please <strong>confirm</strong> if you want to perform this action. Press <strong>Confirm Update</strong> to continue.</div>';
+var MSG_CONFIRM_LOGOUT = '<div class="alert alert-info no-margin-bottom" role="alert"><i class="fa fa-question-circle fa-3x fa-pull-left"></i> Your request will log you out of the system. Please make sure all changes are saved. Press Confirm Logout to continue.</div>';
+var MSG_CONFIRM_DELETE_RECORD = '<div class="alert alert-danger no-margin-bottom" role="alert"><i class="fa fa-exclamation-circle fa-4x fa-pull-left"></i> The changes you are requesting will delete the selected record from the system. Please confirm if you want to perform this action. Press Confirm Delete to continue.</div>';
+var MSG_CONFIRM_UPDATE_RECORD = '<div class="alert alert-danger no-margin-bottom" role="alert"><i class="fa fa-exclamation-circle fa-4x fa-pull-left"></i>You are about to update an existing license which will have an impact on the client\'s side. Please confirm if you want to perform this action. Press Confirm Update to continue.</div>';
 
 // Alert Messages
-var MSG_ALERT_LOGIN_FORM_ERROR = '<div class="alert alert-danger" role="alert" style="text-align: left; margin-bottom: 20px;"><i class="fa fa-exclamation-circle fa-4x fa-pull-left"></i> Your request was <strong>not submitted</strong> because of the following <strong>errors</strong>. Change the value of the field(s) that contains errors and try again.</div>';
-var MSG_ALERT_INVALID_OLD_PASS = '<div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-circle fa-4x fa-pull-left"></i> The changes you requested were <strong>not submitted</strong> because you provided an <strong>invalid old password</strong>. Change the value of the field(s) that contains errors and try again.</div>';
-var MSG_ALERT_INVALID_LOGIN = '<div class="alert alert-danger" role="alert" style="text-align: left; margin-bottom: 20px;"><i class="fa fa-exclamation-circle fa-4x fa-pull-left"></i> You are <strong>not allowed</strong> to access the system. Please enter a valid <strong>Username</strong> and <strong>Password</strong> to continue.</div>';
-var MSG_ALERT_FORM_ERROR = '<div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-circle fa-4x fa-pull-left"></i> The changes you requested were <strong>not submitted</strong> because of the following <strong>errors</strong>. Change the value of the field(s) that contains errors and try again.</div>';
-var MSG_ALERT_DUPLICATE_REC = '<div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-circle fa-4x fa-pull-left"></i> The changes you requested were <strong>not submitted</strong> because they would create <strong>duplicate data</strong> in the system. Change the value of the field(s) that contains duplicate data and try again.</div>';
-var MSG_ALERT_WS_ERROR = '<div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-circle fa-4x fa-pull-left"></i> Your request was <strong>not successful</strong> because there was an <strong>error</strong> in the Web Service response. If issue still persists, please contact your System Developer.</div>';
+var MSG_ALERT_LOGIN_FORM_ERROR = '<div class="alert alert-danger" role="alert" style="text-align: left; margin-bottom: 20px;"><i class="fa fa-exclamation-circle fa-4x fa-pull-left"></i> Your request was not submitted because of the following errors. Change the value of the field(s) that contains errors and try again.</div>';
+var MSG_ALERT_INVALID_OLD_PASS = '<div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-circle fa-4x fa-pull-left"></i> The changes you requested were not submitted because you provided an invalid old password. Change the value of the field(s) that contains errors and try again.</div>';
+var MSG_ALERT_INVALID_LOGIN = '<div class="alert alert-danger" role="alert" style="text-align: left; margin-bottom: 20px;"><i class="fa fa-exclamation-circle fa-4x fa-pull-left"></i> You are not allowed to access the system. Please enter a valid Username and Password to continue.</div>';
+var MSG_ALERT_FORM_ERROR = '<div class="alert alert-danger all-middle" role="alert"><i class="fa fa-exclamation-circle fa-4x fa-pull-left"></i> The changes you requested were not submitted because of the following errors. Change the value of the field(s) that contains errors and try again.</div>';
+var MSG_ALERT_DUPLICATE_REC = '<div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-circle fa-4x fa-pull-left"></i> The changes you requested were not submitted because they would create duplicate data in the system. Change the value of the field(s) that contains duplicate data and try again.</div>';
+var MSG_ALERT_WS_ERROR = '<div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-circle fa-4x fa-pull-left"></i> Your request was not successful because there was an error in the Web Service response. If issue still persists, please contact your System Developer.</div>';

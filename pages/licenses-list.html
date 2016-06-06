@@ -1,5 +1,8 @@
+<h4 class="page-header">
+	<i class="fa fa-key"></i> Licenses <small>Maintenance</small>
+</h4>
 <div class="alert alert-info" role="alert">
-	<h5 class="no-margin-top"><i class="fa fa-info-circle"></i> <strong>Note(s):</strong></h5>
+	<i class="fa fa-info-circle fa-3x fa-pull-left"></i>
 	<ul>
 		<li><i class="fa fa-check-square-o"></i> You must first select a client from the Client Details Lookup before you can create a new license.</li>
 		<li><i class="fa fa-check-square-o"></i> You are not allowed to update expired licenses and can only view their license details.</li>
@@ -7,24 +10,13 @@
 </div>
 <div class="panel panel-default no-margin-bottom">
 	<div class="panel-body">
-		<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-			<div class="btn-group pull-left form-inline" role="group" style="margin-bottom: 15px;">
-				<div class='input-group'>
-					<span class="input-group-addon">
-						<i class="fa fa-user" aria-hidden="true"></i> <strong>Client Name</strong>
-					</span>
-					<input type="hidden" data-field="client_id">
-					<input type="text" class="form-control" data-field="client_name" style="width: 200px; background: #FFFFFF; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-right-style: none;" placeholder="Client Name" readonly>
-				</div>
-				<button type="button" class="btn btn-primary" id='client-lookup'><i class="fa fa-search" aria-hidden="true"></i></button>
-			</div>			
-		</div>
 		<table class="display compact" id="table-data">
 			<thead>
 				<tr>
 					<th class="text-left">CL ID</th>
 					<th class="text-left">Client ID</th>
-					<th class="text-left">Client Name</th>	
+					<th class="text-left">Client Name</th>
+					<th class="text-left">Serial Number</th>
 					<th class="text-left">License Key</th>
 					<th class="text-left">Status</th>					
 					<th class="text-left">Duration</th>
@@ -44,10 +36,10 @@
 					</div>
 					<div class="modal-body">
 						<div class="alert alert-info" role="alert">
-							<h5 class="no-margin-top"><i class="fa fa-info-circle"></i> <strong>Note(s):</strong></h5>
+							<i class="fa fa-info-circle fa-3x fa-pull-left"></i>
 							<ul>
 								<li><i class="fa fa-check-square-o"></i> Select a client from the list below to create a new license and view their corresponding license details.</li>
-								<li><i class="fa fa-check-square-o"></i> You can only create new licenses for active clients. To manage client status, please refer to the Clients page.</li>
+								<li><i class="fa fa-check-square-o"></i> You can only create new licenses for active clients. To manage client status, please refer to the <strong>Clients</strong> page.</li>
 							</ul>
 						</div>
 						<div class="panel panel-default no-margin-bottom">
@@ -83,64 +75,12 @@
 </div>
 <script>
 	$(function () {		
-		var dtClientLookup;
-	
-		// Client Lookup Click Event
-		$('#client-lookup').on('click', function() {
-			// Destroy Clients DT if initialized
-			if ($.fn.DataTable.isDataTable('#table-client-details')) {
-				dtClientLookup.destroy();
-			}
-			
-			// Initialize Customers DT
-			dtClientLookup = STIC.DTLookup({
-				ds: DEFAULT_DS_REPORTS,
-				cd: CD_CLIENT_LOOKUP,
-				ws: WS_CLIENT_LIST,
-				domId: 'table-client-details'
-			});
-			
-			// Show Client Lookup
-			$('#client-list-modal').modal('show');
-		});
-		
-		// Client Lookup > DT Row Click Event
-		$('#table-client-details tbody').on( 'click', 'tr', function () {
-			STIC.DtToggleRowSelect({
-				row: this,
-				table: dtClientLookup,
-				pid: 'client_id',
-				buttons: ['#client-list-modal #select-item']
-			});
-		});
-
-		// Client Lookup > Select Item
-		$('#client-list-modal #select-item').on('click', function () {
-			var selected_row = dtClientLookup.row('.selected');
-			
-			// Load form values
-			$('input[data-field="client_id"]').val(selected_row.data().client_id);
-			$('input[data-field="client_name"]').val(selected_row.data().client_name);
-
-			// Hide Client Lookup
-			$('#client-list-modal').modal('hide');
-			
-			// Reload License List
-			dt.ajax.url(WS_LIST_LICENSES + 'clientLicenseId=' + $('input[data-field="client_id"]').val()).load();
-			dt.button('new:name').enable();
-		});
+		var dtClientLookup;	
 	
 		// Form ID
 		var formId = '#formLicenseDetails', 
-		
-		// DT Buttons Text
-		dtBtnNewTxt = '<i class="fa fa-plus"></i> New License',
-		dtBtnEditTxt = '<i class="fa fa-pencil"></i> Edit License',
-		dtBtnDtlTxt = '<i class="fa fa-info-circle"></i> License Details',
-		dtBtnRelTxt = '<i class="fa fa-refresh"></i> Refresh',
 
-		// Modal Form Options
-		
+		// Modal Form Options		
 		modalViewContent = $('<div></div>').load(VIEW_LICENSE_DETAILS),
 		modalNewFrmContent = $('<div></div>').load(FORM_NEW_LICENSE_DETAILS),
 		modalEditFrmContent = $('<div></div>').load(FORM_EDIT_LICENSE_DETAILS),
@@ -170,8 +110,9 @@
 		dtBtnNew = {
 			name: 'new',
 			enabled: false,
-			text: dtBtnNewTxt,
 			className: 'btn-primary',
+			text: BTN_LABEL_NEW_RECORD,
+			titleAttr: 'New License',
 			action: function (e, dt, node, config) {
 				BootstrapDialog.show({
 					closable: false,
@@ -188,8 +129,9 @@
 		dtBtnEdit = {
 			name: 'edit',
 			enabled: false,
-			text: dtBtnEditTxt,
 			className: 'btn-danger',
+			text: BTN_LABEL_EDIT_RECORD,			
+			titleAttr: 'Edit License',
 			action: function (e, dt, node, config) {
 				BootstrapDialog.show({
 					closable: false,
@@ -204,10 +146,11 @@
 
 		// DT Buttons > Details
 		dtBtnDetails = {						
-			name: 'details',
-			text: dtBtnDtlTxt,	
+			name: 'details',			
 			enabled: false,
 			className: 'btn-primary',
+			text: BTN_LABEL_DETAILS_RECORD,	
+			titleAttr: 'License Details',
 			action: function (e, dt, node, config) {
 				BootstrapDialog.show({
 					closable: false,
@@ -226,8 +169,9 @@
 		// DT Buttons > Refresh
 		dtBtnReload = {
 			name: 'reload',
-			text: dtBtnRelTxt,
 			className: 'btn-primary',
+			text: BTN_LABEL_REFRESH_RECORD,
+			titleAttr: 'Refresh Licenses List',
 			action: function (e, dt, node, config) {
 				dt.ajax.reload();
 			}
@@ -245,15 +189,13 @@
 		function modalEditOnShown(dialogRef) {
 			var rowData = dt.row('.selected').data(),
 				modalBody = dialogRef.getModalBody();
-			$.each(rowData, function(name, value) {
-				modalBody.find('input[data-field="' + name + '"]').val(value);				
+			$.each(rowData, function(name, value) {					
+				modalBody.find('input[data-id="' + name + '"]').val(value);	
+				modalBody.find('input[data-field="' + name + '"]').val(value);
 				if (name === 'license_status') {
-					modalBody.find('select[data-field="license_status"]').val(value === 'Active' ? '1' : '0')
-					modalBody.find('select[data-field="license_status"]').selectpicker('refresh');
+					modalBody.find('input[data-field="license_status"]').val(value === 'Active' ? '1' : '0')
 				}			
 			});
-			modalBody.find('input[data-id="client_name"]').val(rowData.client_name);	
-			modalBody.find('input[data-id="license_key"]').val(rowData.license_key);			
 		}
 		
 		// Trigger on View Modal OnShown event
@@ -270,10 +212,7 @@
 			var modalBody = dialogRef.getModalBody();			
 			modalBody.find('input[data-id]').val('');
 			modalBody.find('input[data-field]').val('');
-			modalBody.find('select[data-field="license_status"]').val('0');
-			modalBody.find('select[data-field="license_status"]').selectpicker('destroy');
 			STIC.ClearHelpBlocks({ formId: formId });
-			dt.ajax.reload();
 		}
 		
 		// New & Edit Save Button Action
@@ -293,17 +232,18 @@
 					if ($('input[data-field="cl_id"]').val() != '') {
 						// Confirm Update
 						BootstrapDialog.confirm({
-							type: 'type-danger',
-							btnOKLabel: BTN_LABEL_CONFIRM_UPDATE,
-							btnCancelLabel: BTN_LABEL_CANCEL_UPDATE,
-							title: MSG_TITLE_CONFIRM_UPDATE,
+							type: 'type-danger',							
+							title: MSG_TITLE_INFO,
 							message: MSG_CONFIRM_UPDATE_RECORD,
+							btnOKLabel: BTN_LABEL_CONFIRM_UPDATE,
+							btnCancelLabel: BTN_LABEL_CANCEL,
 							callback: function (result) {
 								if (result) {
 									JSONObject = {
 										cl_id: $('input[data-field="cl_id"]').val(),
 										license_duration: $('input[data-field="license_duration"]').val(),
-										license_status: $('select[data-field="license_status"]').val(),
+										license_status: $('input[data-field="license_status"]').val(),
+										serial_number: $('input[data-field="serial_number"]').val(),
 										activation_date: moment(new Date()).format('YYYY-MM-DD')
 									};
 									
@@ -314,6 +254,7 @@
 									
 									// Call WS
 									STIC.PostData({
+										dt: dt,
 										url: wsPost,
 										data: JSONString,
 										title: infoTitle,
@@ -327,10 +268,11 @@
 					// For Insert
 					} else {
 						JSONObject = {
+							license_status: 0,
 							client_id: $('input[data-field="client_id"]').val(),
 							client_name: $('input[data-field="client_name"]').val(),
 							license_duration: $('input[data-field="license_duration"]').val(),
-							license_status: $('select[data-field="license_status"]').val(),
+							serial_number: $('input[data-field="serial_number"]').val(),
 							activation_date: moment(new Date()).format('YYYY-MM-DD')
 						};
 						
@@ -341,6 +283,7 @@
 
 						// Call WS
 						STIC.PostData({
+							dt: dt,
 							url: wsPost,
 							data: JSONString,
 							title: infoTitle,
@@ -356,8 +299,6 @@
 			.DataTable({
 				ordering: true,
 				searching: true,
-				processing: false,
-				lengthChange: false,
 				dom: '<"dt-toolbar">Bfrtip',
 				pageLength: DEFAULT_PAGE_LENGTH,
 				columns: CD_LIST_LICENSES,
@@ -385,10 +326,10 @@
 				dt.button('details:name').disable();
 				dt.$('tr.selected').removeClass('selected');
 			});
-
+			
 		// DT Default Sorting
-		dt.column('0:visible').order('asc').draw();
-
+		dt.column('expiration_date:name').order('asc').draw();
+		
 		// DT Row Click Event
 		$('#table-data tbody').on('click', 'tr', function () {
 			var rowData = dt.row(this).data();
@@ -407,5 +348,77 @@
 				}
 			}
 		});		
+		
+		// Client Details Lookup
+		$('div.dt-toolbar').html(
+			'<div class="btn-toolbar" role="toolbar">' +
+				'<div class="btn-group pull-left form-inline" role="group" style="margin-bottom: 0px;">'	+
+					'<div class="input-group">' +
+						'<span class="input-group-addon"><i class="fa fa-user"></i></span>' +
+						'<input type="hidden" data-field="client_id">' +
+						'<input type="text" class="form-control" data-field="client_name" style="width: 200px; background: #FFFFFF; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-right-style: none;" placeholder="Client Name" readonly>' +
+					'</div>' +
+					'<button type="button" class="btn btn-primary" id="client-lookup" title="Client Details Lookup"><i class="fa fa-users"></i></button>' +
+					'<button type="button" class="btn btn-danger" id="reset-list" title="Reset Filter" disabled><i class="fa fa-ban"></i></button>' +
+				'</div>' +
+			'</div>' 
+		);		
+		$('div.dt-toolbar').css('float', 'left');
+		$('div.dt-toolbar').css('margin-right', '5px');
+
+		// Client Lookup Click Event
+		$('#client-lookup').on('click', function() {
+			// Destroy Clients DT if initialized
+			if ($.fn.DataTable.isDataTable('#table-client-details')) {
+				dtClientLookup.destroy();
+			}
+			
+			// Initialize Clients DT
+			dtClientLookup = STIC.DTLookup({
+				pl: 5,
+				ds: DEFAULT_DS_REPORTS,
+				cd: CD_CLIENT_LOOKUP,
+				ws: WS_CLIENT_LIST + 'status=1',
+				domId: 'table-client-details'
+			});
+			
+			// Show Client Lookup
+			$('#client-list-modal').modal('show');
+		});
+		
+		// Reset License List
+		$('#reset-list').on('click', function () {			
+			dt.button('new:name').disable();
+			$('#reset-list').prop('disabled', true);
+			$('input[data-field="client_name"]').val('');
+			dt.ajax.url(WS_LIST_LICENSES).load();
+		});
+		
+		// Client Lookup > DT Row Click Event
+		$('#table-client-details tbody').on( 'click', 'tr', function () {
+			STIC.DtToggleRowSelect({
+				row: this,
+				table: dtClientLookup,
+				pid: 'client_id',
+				buttons: ['#client-list-modal #select-item']
+			});
+		});
+
+		// Client Lookup > Select Item
+		$('#client-list-modal #select-item').on('click', function () {
+			var selected_row = dtClientLookup.row('.selected');
+			
+			// Load form values
+			$('input[data-field="client_id"]').val(selected_row.data().client_id);
+			$('input[data-field="client_name"]').val(selected_row.data().client_name);
+
+			// Hide Client Lookup
+			$('#client-list-modal').modal('hide');
+			
+			// Reload License List
+			dt.ajax.url(WS_LIST_LICENSES + 'clientLicenseId=' + $('input[data-field="client_id"]').val()).load();
+			dt.button('new:name').enable();
+			$('#reset-list').prop('disabled', false);
+		});			
 	});
 </script>

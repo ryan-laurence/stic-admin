@@ -14,8 +14,6 @@ var STIC = {
 				pageLength: dtPl,
 				ordering: dtOd,
 				searching: true,
-				processing: false,
-				lengthChange: false,
 				columns: dtCd,
 				dom: '<"dt-toolbar">Bfrtip',
 				ajax: {
@@ -28,8 +26,9 @@ var STIC = {
 				},
 				buttons: [{
 					name: 'reload',
-					text: '<i class="fa fa-refresh"></i> Refresh',
 					className: 'btn-primary',
+					text: BTN_LABEL_REFRESH_RECORD,
+					titleAttr: BTN_TITLE_REFRESH_RECORD,					
 					action: function (e, dt, node, config) {
 						dt.ajax.reload();
 					}
@@ -86,10 +85,10 @@ var STIC = {
 	},
 	
 	// Create Cookie
-	CreateCookie: function (name, value, days) {
-		if (days) {
+	CreateCookie: function (name, value, hours) {
+		if (hours) {
 			var date = new Date();
-			date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+			date.setTime(date.getTime() + (hours * 60 * 60 * 1000));
 			var expires = '; expires=' + date.toGMTString();
 		}
 		else var expires = '';
@@ -110,14 +109,14 @@ var STIC = {
 	
 	// Remove Cookie
 	EraseCookie: function (name) {
-		this.CreateCookie(name, '', -1);
+		this.CreateCookie(name, '', -DEFAULT_COOKIE_LIFE);
 	},
 
 	// Remove from Audit Trail
 	RemoveToContext: function () {
-		if (this.ReadCookie('stic-name') !== null) {
+		if (this.ReadCookie(DEFAULT_COOKIE_USERNAME) !== null) {
 			var JSONObject = {
-				user_name: this.ReadCookie('stic-name')
+				user_name: this.ReadCookie(DEFAULT_COOKIE_USERNAME)
 			};
 			$.post(WS_USER_REMOVE_FROM_AUDIT, JSONObject)
 				.done(function (results, status) {
@@ -133,8 +132,8 @@ var STIC = {
 	
 	// Check if User is valid
 	CheckIfValid: function (logout) {
-		var userId = this.ReadCookie('stic-user'),
-			userName = this.ReadCookie('stic-name'),
+		var userId = this.ReadCookie(DEFAULT_COOKIE_USERID),
+			userName = this.ReadCookie(DEFAULT_COOKIE_USERNAME),
 			forceLogOut = typeof logout !== 'undefined' 
 					? logout : true;
 
@@ -164,8 +163,8 @@ var STIC = {
 				this.Logout();
 			} else {
 				this.RemoveToContext();
-				this.EraseCookie('stic-user');
-				this.EraseCookie('stic-name');
+				this.EraseCookie(DEFAULT_COOKIE_USERID);
+				this.EraseCookie(DEFAULT_COOKIE_USERNAME);
 			}
 		}
 	},
@@ -222,8 +221,8 @@ var STIC = {
 						var user = response['users-list'].user;
 						
 						// Create Cookies					
-						STIC.CreateCookie('stic-user', user.user_id, 1);
-						STIC.CreateCookie('stic-name', user.user_name, 1);
+						STIC.CreateCookie(DEFAULT_COOKIE_USERID, user.user_id, DEFAULT_COOKIE_LIFE);
+						STIC.CreateCookie(DEFAULT_COOKIE_USERNAME, user.user_name, DEFAULT_COOKIE_LIFE);
 						
 						window.location = DEFAULT_ROOT + 'main.html';
 					
@@ -263,8 +262,10 @@ var STIC = {
 	// Confirm Logout
 	ConfirmLogout: function () {
 		BootstrapDialog.confirm({
-			title: MSG_TITLE_CONFIRM_LOGOUT,
+			title: MSG_TITLE_INFO,
 			message: MSG_CONFIRM_LOGOUT,
+			btnOKLabel: BTN_LABEL_CONFIRM_LOGOUT,
+			btnCancelLabel: BTN_LABEL_CANCEL,
 			callback: function (result) {
 				if (result) {
 					STIC.Logout();
@@ -276,31 +277,36 @@ var STIC = {
 	// Logout
 	Logout: function () {
 		this.RemoveToContext();
-		this.EraseCookie('stic-user');
-		this.EraseCookie('stic-name');
+		this.EraseCookie(DEFAULT_COOKIE_USERID);
+		this.EraseCookie(DEFAULT_COOKIE_USERNAME);
 		window.location = DEFAULT_ROOT;
 	},
 	
 	// Navigation Tabs
-	NavTabs: function () {
-		var first_tab = $('#tab-main > li:first-child'),
-			all_tabs = $('#tab-main > li[data-toggle="tab-main"]');
+	NavTabs: function () {		
+		var first_tab = $('#nav-wrapper > li:first-child > a')
 		
-		$(all_tabs).click(function (e) {
-			var source = $(this).attr('data-url'),
-				target = $(this).attr('data-target');			
+		// Navigation onClick Event
+		$('[data-mod-name]').on('click', function () {
+			var modName = $(this).attr('data-mod-name');
+
+			// Clear active modules style
+			$('#nav-wrapper')
+				.find('li.active')
+				.removeClass('active');
+
+			// Set active module style
+			if (modName != '') {
+				$('a[data-mod-name="' + modName + '"]')
+					.parent('li')
+					.addClass('active');
+			} 
+
+			// Load module page
+			STIC.LoadPage({ 
+				modName: modName 
+			});							
 			
-			$.get(source, function (data) {
-				$(target).html(data);				
-			});
-			
-			$(all_tabs).removeClass('active');
-			$(all_tabs).children('a')
-				.removeClass('make-bold');
-			
-			$(this).addClass('active');
-			$(this).children('a')
-				.addClass('make-bold');
 		});
 		
 		$(first_tab).trigger('click');
@@ -310,9 +316,15 @@ var STIC = {
 	ShowDuplicateError: function (params) {
 		var div = $(params.formId).find('label[for="' + params.ukey + '"]').parent(),
 			input = $(params.formId).find('input[data-field="' + params.ukey + '"]');
-
+		
 		// Remove error messages & styles
-		this.clearHelpBlocks({ formId: params.formId });
+		div
+			.removeClass('has-error has-feedback')
+			.removeClass('has-success has-feedback');
+		input.next('span.glyphicon, small.help-block')
+			.remove();
+		$(params.formId).find('div.alert-info')
+			.hide();
 
 		// Show duplicate error message
 		$(params.formId).prepend(MSG_ALERT_DUPLICATE_REC);
@@ -334,9 +346,9 @@ var STIC = {
 			BootstrapDialog.closeAll();
 			BootstrapDialog.alert({
 				type: 'type-danger',
-				title: MSG_TITLE_WS_ERROR,
+				title: MSG_TITLE_INFO,
 				message: MSG_INFO_WS_ERROR,
-				callback: function(result) {
+				callback: function (result) {
 					BootstrapDialog.closeAll();
 				}
 			});
@@ -347,9 +359,11 @@ var STIC = {
 	ClearHelpBlocks: function (params) {
 		$(params.formId).find('div.form-group')
 			.removeClass('has-error has-feedback')
-			.removeClass('has-success has-feedback');
-		$(params.formId).find('div.alert, span.glyphicon, small.help-block')
+			.removeClass('has-success has-feedback');		
+		$(params.formId).find('div.alert-danger, span.glyphicon, small.help-block')
 			.remove();
+		$(params.formId).find('div.alert-info')
+			.show();
 	},
 	
 	// Form Validation
@@ -451,8 +465,10 @@ var STIC = {
 				totalErrors += fieldErrors;
 			});
 
-			if (totalErrors > 0)
+			if (totalErrors > 0) {
+				$(options.formId).find('div.alert-info').hide();
 				$(options.formId).prepend(MSG_ALERT_FORM_ERROR);
+			}				
 
 			return totalErrors > 0 ? false : true;
 		}
@@ -488,9 +504,18 @@ var STIC = {
 						}
 					});
 
-				// on WS Error
+				// on WS Error 
 				} else {
-					STIC.ShowWSError({ formId: params.formId });
+					var pattern = new RegExp(/Duplicate entry/g);
+					if (pattern.test(response.message) === true) {
+						var ukey = response.message.match(/(\'\w*\')(?!.*\'\w*\')/g);
+						STIC.ShowDuplicateError({
+							formId: '#formClientDetails'	,
+							ukey: ukey[0].replace(/\'/g, '')													
+						})
+					} else {
+						STIC.ShowWSError({ formId: params.formId });
+					}
 				}
 			})
 
@@ -537,8 +562,9 @@ var STIC = {
 		// DT Buttons > New
 		dtBtnNew = {
 			name: 'new',
-			text: dtBtnNewTxt,
 			className: 'btn-primary',
+			text: BTN_LABEL_NEW_RECORD,
+			titleAttr: 'New Client',
 			action: function (e, dt, node, config) {
 				BootstrapDialog.show({
 					closable: false,
@@ -555,8 +581,9 @@ var STIC = {
 		dtBtnEdit = {
 			name: 'edit',
 			enabled: false,
-			text: dtBtnEditTxt,
 			className: 'btn-danger',
+			text: BTN_LABEL_EDIT_RECORD,
+			titleAttr: 'Edit Client',			
 			action: function (e, dt, node, config) {
 				BootstrapDialog.show({
 					closable: false,
@@ -571,10 +598,11 @@ var STIC = {
 
 		// DT Buttons > Details
 		dtBtnDetails = {						
-			name: 'details',
-			text: dtBtnDtlTxt,	
+			name: 'details',				
 			enabled: false,
 			className: 'btn-primary',
+			text: BTN_LABEL_DETAILS_RECORD,	
+			titleAttr: 'Client Details',	
 			action: function (e, dt, node, config) {
 				BootstrapDialog.show({
 					closable: false,
@@ -593,8 +621,9 @@ var STIC = {
 		// DT Buttons > Refresh
 		dtBtnReload = {
 			name: 'reload',
-			text: dtBtnRelTxt,
 			className: 'btn-primary',
+			text: BTN_LABEL_REFRESH_RECORD,
+			titleAttr: 'Refresh Clients List',				
 			action: function (e, dt, node, config) {
 				dt.ajax.reload();
 			}
@@ -606,17 +635,59 @@ var STIC = {
 			modalBody.find('input[data-field]').val('');
 		}
 
-		// Trigger on Edit Modal onshown event
+		// Trigger on Edit Modal OnShown event
 		function modalEditOnShown(dialogRef) {
 			var rowData = dt.row('.selected').data(),
-				modalBody = dialogRef.getModalBody();
-			$.each(rowData, function(name, value) {
-				modalBody.find('input[data-field="' + name + '"]').val(value);
-				if (name === 'status') {
-					modalBody.find('select[data-field="status"]').val(value === 'Active' ? '1' : '0')
-					modalBody.find('select[data-field="status"]').selectpicker('refresh');
-				}					
-			});
+				modalBody = dialogRef.getModalBody(),
+			
+			// For checking active licenses
+			params = { 
+				license_status: 1,
+				clientLicenseId: rowData.client_id 
+			};
+				
+			// Check if client have active licenses
+			$.post(WS_LIST_LICENSES, params)
+				.done(function (results, status) {
+					
+					// Remove elements for status
+					modalBody.find('select[data-field="status"]').selectpicker('destroy');
+					modalBody.find('select[data-field="status"]').remove();
+					modalBody.find('input[data-field="status"]').remove();
+					modalBody.find('input[data-value="status"]').remove();
+					
+					// Append input (readonly) 
+					if (results.response.type === 'SUCCESS') {						
+						modalBody.find('#status-box').append(
+							'<input type="hidden" data-field="status" value="1">' +
+							'<input type="text" class="form-control" data-value="status" value="Active" readonly>'
+						);
+						
+					// Append select
+					} else {					
+						modalBody.find('#status-box').append(
+							'<select class="form-control" data-field="status">' +
+								'<option value="1">Active</option>' +
+								'<option value="0">Inactive</option>' +
+							'</select>'
+						);						
+					}	
+
+					// Load form values
+					$.each(rowData, function (name, value) {						
+						if (name === 'status') {
+							modalBody.find('select[data-field="status"]').val(value === 'Active' ? '1' : '0')
+							modalBody.find('select[data-field="status"]').selectpicker();
+						}	else {
+							modalBody.find('input[data-field="' + name + '"]').val(value);							
+						}				
+					});						
+				})
+				
+				// Show WS Error
+				.fail(function () {
+					STIC.ShowWSError({ formId: params.formId });
+				});
 		}
 		
 		// Trigger on View Modal OnShown event
@@ -635,7 +706,6 @@ var STIC = {
 			modalBody.find('select[data-field="status"]').val('1');
 			modalBody.find('select[data-field="status"]').selectpicker('destroy');
 			STIC.ClearHelpBlocks({ formId: params.formId });
-			dt.ajax.reload();
 		}
 
 		// New & Edit Save Button Action
@@ -653,7 +723,7 @@ var STIC = {
 					elements = modalBody.find('input[data-field], select[data-field]');
 
 				// Switch between insert & update options
-				if (pkey.val() != '') {
+				if (pkey.length > 0 && pkey.val() != '') {
 					wsPost = params.wsUpdate;
 					infoTitle = MSG_TITLE_EDIT_REC;
 					infoMessage = MSG_INFO_EDIT_REC;
@@ -679,6 +749,7 @@ var STIC = {
 							// Proceed with insert if no duplicate records found
 							if (result.response.type === 'FAILED') {
 								insertUpdateData({
+									dt: dt,
 									url: wsPost,
 									title: infoTitle,
 									message: infoMessage,
@@ -702,6 +773,7 @@ var STIC = {
 				// Proceed with insert if not required to check duplicate
 				} else {
 					insertUpdateData({
+						dt: dt,
 						url: wsPost,
 						title: infoTitle,
 						message: infoMessage,
@@ -725,13 +797,17 @@ var STIC = {
 				$.extend(JSONObject, $.parseJSON(postString));
 			});
 			
-			//$.extend(JSONObject, { activation_date: moment(new Date()).format('YYYY-MM-DD') });	
+			$.extend(JSONObject, { 
+				activation_date: moment(new Date()).format('YYYY-MM-DD'), 
+				license_status: 0
+			});	
 
 			// Build JSON string
 			JSONString = params.objectId + '=' + JSON.stringify(JSONObject);
 			
 			// Call WS
 			STIC.PostData({
+				dt: o.dt,
 				url: o.url,
 				data: JSONString,
 				title: o.title,
@@ -745,8 +821,6 @@ var STIC = {
 			.DataTable({
 				ordering: true,
 				searching: true,
-				processing: false,
-				lengthChange: false,
 				dom: '<"dt-toolbar">Bfrtip',
 				pageLength: DEFAULT_PAGE_LENGTH,
 				columns: params.cd,
