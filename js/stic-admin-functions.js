@@ -181,8 +181,6 @@ var STIC = {
 			.removeClass('has-success has-feedback');
 		$('.login-form').find('div.form-group').find('span.glyphicon, small.help-block')
 			.remove();	
-		$('.login-form').find('div.alert')
-			.remove();
 		
 		// Validate user name
 		var divInputGroup = $('.login-form').find('#username').parent(),
@@ -234,8 +232,10 @@ var STIC = {
 							.removeClass('has-success has-feedback');
 						$('.login-form').find('div.form-group').find('span.glyphicon, small.help-block')
 							.remove();	
-						$('.login-form').find('div.alert')
+						$('.login-form').find('div.alert-danger')
 							.remove();
+						$('.login-form').find('div.alert-info')
+							.hide();
 						
 						// Show error messages & styles
 						$('.login-form hr:first').after(MSG_ALERT_INVALID_LOGIN);
@@ -255,6 +255,8 @@ var STIC = {
 					STIC.ShowWSError();
 				})
 		} else {
+			$('.login-form').find('div.alert-danger').remove();
+			$('.login-form').find('div.alert-info').hide();				
 			$('.login-form hr:first').after(MSG_ALERT_LOGIN_FORM_ERROR);
 		}
 	},

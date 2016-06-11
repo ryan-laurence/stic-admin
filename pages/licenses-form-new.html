@@ -1,6 +1,6 @@
 <form class="form-horizontal well no-margin-bottom" id="formLicenseDetails">
 	<div class="alert alert-info" role="alert" style="text-align: left">
-		<i class="fa fa-info-circle fa-4x fa-pull-left"></i> When adding new license(s), their default License Status is set to <strong>Inactive</strong>. This will be updated when a client has successfully activated the STIC system.  
+		<i class="fa fa-info-circle fa-4x fa-pull-left"></i> When creating a new license, default License Status is set to <strong>Inactive</strong>. This will be updated when a client has successfully activated the STIC system.  
 	</div>
 	<input type="hidden" data-field="cl_id">
 	<div class="form-group">
@@ -8,9 +8,15 @@
 		<input type="text" class="form-control" data-id="client_name" readonly>
 	</div>
 	<div class="form-group">
-		<label class="control-label" for="serial_number">Serial Number</label>
-		<input type="text" class="form-control" placeholder="Enter Serial Number"
-			data-field="serial_number"
+		<label class="control-label" for="pc_number">PC Number</label>
+		<input type="text" class="form-control" placeholder="Enter PC Number"
+			data-field="pc_number"
+			data-fv-notempty="true">
+	</div>
+	<div class="form-group">
+		<label class="control-label" for="hd_serial_number">HD Serial Number</label>
+		<input type="text" class="form-control" placeholder="Enter HD Serial Number"
+			data-field="hd_serial_number"
 			data-fv-notempty="true">
 	</div>
 	<div class="form-group">

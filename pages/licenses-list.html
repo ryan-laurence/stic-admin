@@ -16,11 +16,12 @@
 					<th class="text-left">CL ID</th>
 					<th class="text-left">Client ID</th>
 					<th class="text-left">Client Name</th>
-					<th class="text-left">Serial Number</th>
+					<th class="text-left">PC Number</th>
+					<th class="text-left">HD Serial Number</th>
 					<th class="text-left">License Key</th>
 					<th class="text-left">Status</th>					
 					<th class="text-left">Duration</th>
-					<th class="text-left">Activation Date</th>
+					<th class="text-left">Creation Date</th>
 					<th class="text-left">Expiration Date</th>					
 					<th class="text-left">Date Modified</th>	
 				</tr>
@@ -243,7 +244,8 @@
 										cl_id: $('input[data-field="cl_id"]').val(),
 										license_duration: $('input[data-field="license_duration"]').val(),
 										license_status: $('input[data-field="license_status"]').val(),
-										serial_number: $('input[data-field="serial_number"]').val(),
+										pc_number: $('input[data-field="pc_number"]').val(),
+										hd_serial_number: $('input[data-field="hd_serial_number"]').val(),
 										activation_date: moment(new Date()).format('YYYY-MM-DD')
 									};
 									
@@ -272,7 +274,8 @@
 							client_id: $('input[data-field="client_id"]').val(),
 							client_name: $('input[data-field="client_name"]').val(),
 							license_duration: $('input[data-field="license_duration"]').val(),
-							serial_number: $('input[data-field="serial_number"]').val(),
+							pc_number: $('input[data-field="pc_number"]').val(),
+							hd_serial_number: $('input[data-field="hd_serial_number"]').val(),
 							activation_date: moment(new Date()).format('YYYY-MM-DD')
 						};
 						

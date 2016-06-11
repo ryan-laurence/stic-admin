@@ -72,14 +72,14 @@ CD_LIST_LICENSES = [
 	{ data: 'cl_id', visible: false, searchable: false },	
 	{ data: 'client_id', visible: false, searchable: false },	
 	{ data: 'client_name', visible: false, searchable: false },		
-	{ data: 'serial_number' },
+	{ data: 'pc_number' },
+	{ data: 'hd_serial_number' },
 	{ data: 'license_key' },
 	{ data: 'license_status' },
 	{ data: 'license_duration' },
 	{ data: 'activation_date' },		
 	{ data: 'expiration_date', name: 'expiration_date' },	
-	{ data: 'date_modified', visible: false, searchable: false },
-	{ data: 'filename', visible: false, searchable: false }
+	{ data: 'date_modified', visible: false, searchable: false }
 ];
 var VIEW_LICENSE_DETAILS = 'pages/licenses-details.html';
 var FORM_NEW_LICENSE_DETAILS = 'pages/licenses-form-new.html';
