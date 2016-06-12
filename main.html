@@ -12,7 +12,8 @@
 		<link rel="stylesheet" href="css/dt.css" />
 		<link rel="stylesheet" href="css/dt-colreorder.min.css" />
 		<link rel="stylesheet" href="css/dt-buttons.css" />
-		<link rel="stylesheet" href="css/stic-custom.css" />	
+		<link rel="stylesheet" href="css/dt-buttons-bootstrap.css" />
+		<link rel="stylesheet" href="css/stic-custom.css" />			
   </head>
   <body>
     <div class="container">
@@ -32,10 +33,15 @@
 										<i class="fa fa-key"></i> Licenses
 									</a>
 								</li>
-								<li>
-									<a data-mod-name="reports-list">
-										<i class="fa fa-table"></i> Reports
+								<li class="dropdown">
+									<a class="dropdown-toggle" aria-expanded="false" role="button" data-toggle="dropdown">
+										<i class="fa fa-table"></i> Reports <span class="caret"></span>
 									</a>
+									<ul class="dropdown-menu" role="menu">
+										<li>
+											<a data-mod-name="report-client-licenses">Client Licenses</a>
+										</li>
+									</ul>
 								</li>
 							</ul>
 							<ul class="nav navbar-nav navbar-right">
@@ -60,8 +66,12 @@
 		<script type="text/javascript" src="js/jquery-widget.min.js"></script>
 		<script type="text/javascript" src="js/dt.min.js"></script>
 		<script type="text/javascript" src="js/dt-colreorder.min.js"></script>
-		<script type="text/javascript" src="js/dt-buttons.min.js"></script>
+		<script type="text/javascript" src="js/dt-buttons.min.js"></script>		
+		<script type="text/javascript" src="js/jszip.min.js"></script>		
+		<script type="text/javascript" src="js/pdfmake.min.js"></script>
+		<script type="text/javascript" src="js/vfs_fonts.js"></script>
 		<script type="text/javascript" src="js/dt-buttons-print.min.js"></script>
+		<script type="text/javascript" src="js/dt-buttons-html5.min.js"></script>
 		<script type="text/javascript" src="js/dt-buttons-bootstrap.min.js"></script>
 		<script type="text/javascript" src="js/moment.min.js"></script>
 		<script type="text/javascript" src="js/transition.js"></script>

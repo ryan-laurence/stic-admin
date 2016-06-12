@@ -867,5 +867,326 @@ var STIC = {
 				}
 			}
 		});
+	},
+	
+	// Set PDF Styles
+	SetPDFStyles: function (params) {
+		var doc = params.doc,			
+			footerData = params.footerData || [];
+		
+		// Get Column Widths & Set Footer Columns
+		var widths = [], footerCols = [];
+		$.each(params.cd, function (idx, column) {
+			if (typeof column.visible === 'undefined') {
+
+				// Get Column Width
+				var width = typeof column.width !== 'undefined' ? column.width : '*';
+				widths.push(width);
+
+				// Set Table Footer
+				if (footerData.length > 0) {
+					var hasMatch = 0;
+					$.each(footerData, function (idy, footer) {
+						if (footer.data === column.data) {
+							hasMatch++;
+							footerCols.push({
+								text: footer.text,
+								style: 'tableFooter',
+								alignment: 'left'
+							});
+						} 
+					});
+					if (hasMatch === 0)
+						footerCols.push({ text: '' });
+				} else {
+					footerCols.push({ text: '' });
+				}					
+			}
+		});		
+		
+		// Default Styles
+		doc.defaultStyle.columnGap = 5;
+
+		// Table Header Styles overrides
+		doc.styles.tableHeader.fillColor = '';
+		doc.styles.tableHeader.color = '#000000';
+		doc.styles.tableHeader.alignment = 'left';
+		doc.styles.tableHeader.margin = [0, 12, 0, 2];
+
+		// Table Body Styles overrides
+		doc.styles.tableBodyOdd.fillColor = '';
+		doc.styles.tableBodyEven.fillColor = '';
+
+		// Table Footer Styles overrides
+		doc.styles.tableFooter.bold = true;
+		doc.styles.tableFooter.fillColor = '';
+		doc.styles.tableFooter.color = '#000000';
+
+		// Table Widths
+		doc.content[1]['table']['widths'] = widths;
+
+		// Table Layout
+		doc.content[1]['layout'] = {
+			hLineWidth: function (i, node) {
+				return (i === 1 || i === (node.table.body.length - 1)) ? 1 : 0;
+			},
+			hLineColor: function (i, node) {
+				return (i === 1 || i === (node.table.body.length - 1)) ? 'black' : '';
+			},
+			vLineWidth: function (i, node) { return 0; },
+			vLineColor: function (i, node) { return ''; },
+			paddingLeft: function (i, node) { return 2; },
+			paddingRight: function (i, node) { return 2; },
+			paddingTop: function (i, node) { return 6; },
+			paddingBottom: function (i, node) { return 6; }
+		};
+		
+		// Table Footer
+		var rowCount = doc.content[1]['table']['body'].length;
+		doc.content[1]['table']['body'].splice(rowCount, 0, footerCols);
+		
+		return doc;
+	},		
+
+	
+	// Summary Reports
+	SummaryReport: function (params) {
+
+		// License Status
+		$('#license_status').selectpicker();	
+	
+		var setDTP = function (dp1, dp2) {
+			$(dp1).datetimepicker({ 
+				format: DEFAULT_DATE_FORMAT 
+			});
+			$(dp2).datetimepicker({ 
+				format: DEFAULT_DATE_FORMAT 
+			});
+			$(dp1).on('dp.change', function (e) {
+				$(dp2).data('DateTimePicker').minDate(e.date);
+			});
+			$(dp2).on('dp.change', function (e) {
+				$(dp1).data('DateTimePicker').maxDate(e.date);
+			});
+		}
+		
+		// Set DP
+		setDTP('#gd-dp1', '#gd-dp2');
+		setDTP('#ad-dp1', '#ad-dp2');
+		setDTP('#ed-dp1', '#ed-dp2');
+
+		// DT Buttons > Copy
+		dtBtnCopy = {
+			name: 'copy',
+			extend: 'copyHtml5',
+			className: 'btn-primary',
+			text: BTN_LABEL_COPY,
+			titleAttr: BTN_TITLE_COPY,
+			exportOptions: {
+				columns: ':visible',
+				modifier: {
+					page: 'current'
+				}
+			}
+		},
+
+		// DT Buttons > CSV
+		dtBtnCSV = {
+			name: 'csv',
+			extend: 'csvHtml5',
+			className: 'btn-primary',
+			text: BTN_LABEL_EXPORT_CSV,
+			titleAttr: BTN_TITLE_EXPORT_CSV,
+			exportOptions: {
+				columns: ':visible'
+			}
+		},
+
+		// DT Buttons > Excel
+		dtBtnExcel = {
+			name: 'excel',
+			extend: 'excelHtml5',
+			className: 'btn-primary',
+			text: BTN_LABEL_EXPORT_EXCEL,
+			titleAttr: BTN_TITLE_EXPORT_EXCEL,
+			exportOptions: {
+				columns: ':visible'
+			}
+		},
+
+		// DT Buttons > PDF
+		dtBtnPDF = {
+			name: 'pdf',
+			extend: 'pdfHtml5',
+			title: params.title,
+			className: 'btn-primary',
+			text: BTN_LABEL_EXPORT_PDF,
+			titleAttr: BTN_TITLE_EXPORT_PDF,
+			customize: dtPDFPrintCustom,
+			orientation: 'landscape',
+			pageSize: 'legal',
+			exportOptions: {
+				columns: ':visible'
+			}
+		},
+		
+		// DT Buttons > Web Page Print
+		dtBtnPrint = {						
+			name: 'print',
+			extend: 'print',		
+			enabled: false,
+			autoPrint: false,		
+			title: params.title,	
+			className: 'btn-primary',
+			text: BTN_LABEL_PRINT_RECORD,
+			titleAttr: BTN_TITLE_PRINT_RECORD,
+			customize: dtWebPagePrintCustom,		
+			exportOptions: { 
+				columns: ':visible' 
+			}				
+		};
+		
+		// DT Init
+		var dtSummary = $('#table-summary')
+			.DataTable({
+				pageLength: 10,
+				ordering: true,
+				searching: false,
+				columns: params.cd,			
+				ajax: {
+					url: params.ws,
+					dataSrc: function (json) {
+						var ds = params.ds.split('.'),
+							rec = json[ds[0]][ds[1]][ds[2]];
+						return ($.isArray(rec) === true ? rec : (rec !== '' ? [rec] : []));
+					}
+				},
+				dom: '<"dt-toolbar">B<"dt-total">rtip',
+				buttons: [dtBtnCopy, dtBtnCSV, dtBtnExcel, dtBtnPrint]
+			})
+			.on('draw.dt', function (e, settings, data) {
+				var btns = [
+					'copy:name', 
+					'csv:name', 
+					'excel:name', 
+					'pdf:name', 
+					'print:name'
+				];			
+				dtSummary.data().length > 0 ?
+					dtSummary.buttons(btns).enable() :
+					dtSummary.buttons(btns).disable();
+			});
+
+		// DT Default Sorting
+		dtSummary.column('expiration_date:name').order('asc').draw();
+		
+		// Search Report
+		$('#search-report').on('click', function () {
+			var JSONObject = {},
+				JSONString = '';
+			
+			if ($('#client_name').val() !== '') {
+				$.extend(JSONObject, { client_name: $('#client_name').val() });	
+			}
+			
+			if ($('#pc_number').val() !== '') {
+				$.extend(JSONObject, { pc_number: $('#pc_number').val() });	
+			}
+			
+			if ($('#hd_serial_number').val() !== '') {
+				$.extend(JSONObject, { hd_serial_number: $('#hd_serial_number').val() });	
+			}
+			
+			if ($('#license_key').val() !== '') {
+				$.extend(JSONObject, { license_key: $('#license_key').val() });	
+			}
+			
+			if ($('#license_status').val() !== '') {
+				$.extend(JSONObject, { license_status: $('#license_status').val() });	
+			}
+			
+			if ($('#gd-start-date').val() !== '' && $('#gd-end-date').val() !== '') {
+				$.extend(JSONObject, { 
+					generateDateFrom: $('#gd-start-date').val(),
+					generateDateTo: $('#gd-end-date').val(),					
+				});	
+			}
+			
+			if ($('#ad-start-date').val() !== '' && $('#ad-end-date').val() !== '') {
+				$.extend(JSONObject, { 
+					activationDateFrom: $('#ad-start-date').val(),
+					activationDateTo: $('#ad-end-date').val(),					
+				});	
+			}
+			
+			if ($('#ed-start-date').val() !== '' && $('#ed-end-date').val() !== '') {
+				$.extend(JSONObject, { 
+					expirationDateFrom: $('#ed-start-date').val(),
+					expirationDateTo: $('#ed-end-date').val(),					
+				});	
+			}
+			
+			JSONString = 'filtersParameters=' + JSON.stringify(JSONObject);
+			dtSummary.ajax.url(params.ws + JSONString).load();			
+		});		
+		
+		// Reset Report
+		$('#reset-report').on('click', function () {				
+			$('.form-control').val('');
+			$('#license_status').selectpicker('val', '');
+			dtSummary.ajax.url(params.ws).load();
+		});
+		
+		// Customize PDF Print Output
+		function dtPDFPrintCustom(doc) {	
+			// Set Default Styles
+			var pdfDoc = STIC.SetPDFStyles({
+				doc: doc,
+				cd: params.cd
+			});
+
+			// Set add. messages
+			/*var fromLabel = { width: 30, bold: true, text: 'From :' },			
+				toLabel = { width: 30, bold: true, text: 'To :' },
+				fromDate = { width: 'auto', text: $('#start-date').val() },
+				toDate = { width: 'auto', text: $('#end-date').val() };
+			pdfDoc.content.splice(1, 0, { columns: [fromLabel, fromDate] });
+			pdfDoc.content.splice(2, 0, { columns: [toLabel, toDate] });*/
+		}
+		
+		// Customize Web Page Print Output
+		function dtWebPagePrintCustom(win) {
+			$(win.document.body)
+				.css('background', 'none')
+				.css('font-weight', 'normal')
+				.css('font-family', 'Monospaced');						
+			// Title
+			$(win.document.body).find('h1')								
+				.css('font-size', '16pt')
+				.css('text-align', 'center');							
+			// Message
+			$(win.document.body).find('div')							
+				.css('font-size', '11pt')
+				.css('text-align', 'left')
+				.css('margin', '20px 0px 15px 0px')
+				.html('');						
+			// Data Table
+			$(win.document.body).find('table')
+				.removeClass('display')
+				.removeClass('compact');							
+			$(win.document.body).find('table th')
+				.css('font-size', '11pt')
+				.css('text-align', 'left')
+				.css('padding-left', '0px');							
+			$(win.document.body).find('table td')							
+				.css('font-size', '10pt')
+				.css('text-align', 'left')
+				.css('padding-left', '0px')
+				.css('padding-top', '10px')
+				.css('padding-bottom', '10px')
+				.css('font-weight', 'normal');							
+		}
 	}
 }
+
+

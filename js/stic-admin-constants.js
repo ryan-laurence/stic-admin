@@ -5,6 +5,7 @@ var DEFAULT_PAGE_LOC = 'pages/';
 var DEFAULT_COOKIE_LIFE = 1;
 var DEFAULT_PAGE_LENGTH = 10;
 var DEFAULT_PAGE_FILE_EXT = '.html';
+var DEFAULT_DATE_FORMAT = 'MM/DD/YYYY';
 var DEFAULT_WRAPPER_ID = '#main-wrapper';
 var DEFAULT_COOKIE_USERID = 'stic-admin-userid';
 var DEFAULT_COOKIE_USERNAME = 'stic-admin-username';
@@ -93,6 +94,21 @@ var WS_USER_CHECK = '/stic-admin/services/UserInfoServices/getUserByNamePassList
 var WS_USER_AUTHENTICATE = '/stic-admin/services/UserInfoServices/checkIfUserIsAuthentication?response=application/json&';
 var WS_USER_REMOVE_FROM_AUDIT = '/stic-admin/services/UserInfoServices/removeUser?response=application/json&';
 
+// Report Summary
+var CD_REPORT_CLIENT_LICENSES = [
+	{ data: 'client_name', name: 'client_name' },
+	{ data: 'pc_number', name: 'pc_number' },
+	{ data: 'hd_serial_number', name: 'hd_serial_number' },
+	{ data: 'license_key', name: 'license_key' },
+	{ data: 'license_duration', name: 'license_duration' },
+	{ data: 'license_status', name: 'license_status' },
+	{ data: 'generation_date', name: 'generation_date' },
+	{ data: 'activation_date', name: 'activation_date' },
+	{ data: 'expiration_date', name: 'expiration_date' }
+];
+var REPORT_TITLE_CLIENT_LICENSES = 'Client Licenses Summary';
+var WS_REPORT_CLIENT_LICENSES = '/stic-admin/services/ClientLicensesInfoServices/getLicenseKeyByClientsList?response=application/json&';
+
 // Button Labels
 var BTN_LABEL_NEW_RECORD = '<i class="fa fa-plus"></i>';
 var BTN_LABEL_EDIT_RECORD = '<i class="fa fa-pencil"></i>';
@@ -102,11 +118,16 @@ var BTN_LABEL_REFRESH_RECORD = '<i class="fa fa-refresh"></i>';
 var BTN_LABEL_CONFIRM_UPDATE = '<i class="fa fa-pencil"></i> Confirm Update';
 var BTN_LABEL_CONFIRM_LOGOUT = '<i class="fa fa-sign-out"></i> Confirm Logout';
 var BTN_LABEL_CANCEL = '<i class="fa fa-ban"></i> Cancel';
+var BTN_LABEL_COPY = '<i class="fa fa-clone"></i>';
+var BTN_LABEL_EXPORT_CSV = '<i class="fa fa-file-text-o"></i>';
+var BTN_LABEL_EXPORT_EXCEL = '<i class="fa fa-file-excel-o"></i>';
+var BTN_LABEL_EXPORT_PDF = '<i class="fa fa-file-pdf-o"></i>';
+var BTN_LABEL_PRINT_RECORD = '<i class="glyphicon glyphicon-print"></i>';
 
 // Button Title Attribute
-var BTN_TITLE_NEW_RECORD = 'New';
-var BTN_TITLE_EDIT_RECORD = 'Edit';
-var BTN_TITLE_DELETE_RECORD = 'Delete';
+var BTN_TITLE_NEW_RECORD = 'New Data';
+var BTN_TITLE_EDIT_RECORD = 'Edit Data';
+var BTN_TITLE_DELETE_RECORD = 'Delete Data';
 var BTN_TITLE_REFRESH_RECORD = 'Refresh Data Table';
 var BTN_TITLE_COPY = 'Copy Data to Clipboard';
 var BTN_TITLE_EXPORT_CSV = 'Export Data to CSV File';
