@@ -1110,11 +1110,11 @@ body {
 	/* fallback */
   background-color: #2F2727;
 
- background: url(../images/body-bg.jpg) no-repeat center center fixed;
--webkit-background-size: cover;
--moz-background-size: cover;
--o-background-size: cover;
-background-size: cover;
+	background: url(../images/body-bg.jpg) no-repeat center center fixed;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
 }
 input,
 button,
